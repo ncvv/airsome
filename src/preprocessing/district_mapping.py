@@ -61,7 +61,3 @@ uniqueValues(cutFrame)
 
 uniqueValues(barriers)
 # there is no neighbourhood group so this can be cut from the table neighbourhoods (1.st col)
-
-color = 'black'
-if (color == 'black'):
-    print("Hello I am green")

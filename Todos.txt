@@ -1,4 +1,13 @@
 1- Daten Sammeln - DONE
 2- andere Features Crawlen?
-3- Straßen auf Bezirk Mappen
-4-
+3- Straßen auf Bezirk Mappen [Nadja]
+4- Nur Wohnungen nutzen die noch existieren - rausfiltern [Nico]
+5- Daten Visualisieren - Bewertungen Attribute, Bezirke, Heatmap - Datenset kennenlernen [ALLE]
+6- nur EN reviews 
+7- Filtern welche Attribute interessant sind - mappen von Values 
+8- TODO datenset jeder ansehen die ersten 1000  Einträge Spalte für Spalte
+9- Kommata rausmachen Nico
+10- how to handel nan values in rows?
+
+
+
