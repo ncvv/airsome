@@ -1,37 +1,29 @@
 ''' Main entry point of the code, where the program is launched. '''
 import pandas as pd
+
 import utilities.io as io
-import preprocessing.tokenizer as tkn
+import preprocessing.preprocess as pp
 
 def inspect_dataset(dataset):
     ''' Dataset inspection method for getting insights on different features, value examples, .. '''
     pd.set_option('display.max_rows', 500)
-    pd.set_option('display.max_colwidth', 50)
+    pd.set_option('display.max_colwidth', 120)
 
     # Access column id
-    #print(dataset["id"])
+    print(dataset["id"])
     # Join Column names and print them
-    #print('\n'.join(list(dataset)))
-    # Example values
-    print(dataset.iloc[7])
+    print('\n'.join(list(dataset)))
+    # Example values of ex. with id 10
+    print(dataset.iloc[10])
 
 def main():
     ''' Main method. '''
-    #print('Listings Subset: ' + '\n')
-    listings_subset = io.read_csv('../data/subset/listings_sub.csv')
-    listings = io.read_csv('../data/original/listings.csv')
-    #inspect_dataset(listings_subset)
-
-    #print(('\n' * 2) + 'Reviews Subset: ' + '\n')
-    reviews_subset = io.read_csv('../data/subset/reviews_sub.csv')
     reviews = io.read_csv('../data/original/reviews.csv')
-    #inspect_dataset(reviews_subset)
+    #inspect_dataset(reviews)
+    listings = io.read_csv('../data/original/listings.csv')
+    #inspect_dataset(listings)
 
-    drop_list = ['listing_url', 'scrape_id', 'last_scraped', 'thumbnail_url', 'medium_url', 'picture_url', 'xl_picture_url', 'host_url', 'host_thumbnail_url', 'host_picture_url']
-    drop_list.extend(['name', 'summary', 'space', 'description', 'transit', 'house_rules', 'amenities', 'neighborhood_overview', 'notes', 'access', 'interaction', 'host_about'])
-    drop_list.extend(['host_acceptance_rate', 'neighbourhood_group_cleansed', 'license', 'jurisdiction_names', 'has_availability', 'host_neighbourhood', 'host_listings_count', 'host_total_listings_count', 'street', 'city', 'state', 'market', 'smart_location', 'country', 'monthly_price', 'weekly_price', 'calendar_last_scraped', 'requires_license', ])
-    listings.drop(drop_list, axis=1, inplace=True)
-    io.write_csv(listings, '../data/processed/listings_processed.csv')
+    pp.process_listings(listings)
 
 if __name__ == '__main__':
     main()
