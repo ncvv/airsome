@@ -1,4 +1,6 @@
-''' Main entry point of the code, where the program is launched. '''
+''' Main entry point of the project, where the program is launched. '''
+
+import requests
 import pandas as pd
 
 import utilities.io as io
@@ -18,12 +20,15 @@ def inspect_dataset(dataset):
 
 def main():
     ''' Main method. '''
-    reviews = io.read_csv('../data/original/reviews.csv')
-    #inspect_dataset(reviews)
-    listings = io.read_csv('../data/original/listings.csv')
-    #inspect_dataset(listings)
+    #listings = io.read_csv('../data/original/listings.csv')
+    #pp.process_listings(listings)
 
-    pp.process_listings(listings)
+    session = requests.Session()
+    reviews = io.read_csv('../data/original/reviews.csv')
+    listings = io.read_csv('../data/processed/listings_processed.csv')
+    listings_text = io.read_csv('../data/processed/listings_text_processed.csv')
+    preprocessor = pp.Preprocessor(session, listings, listings_text, reviews)
+    preprocessor.process()
 
 if __name__ == '__main__':
     main()
