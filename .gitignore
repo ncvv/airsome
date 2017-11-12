@@ -102,9 +102,4 @@ ENV/
 
 # Specific to this project
 .vscode
-<<<<<<< HEAD
 data/original/*
-=======
-Test2.py
-data/original/*
->>>>>>> 6b2750e1e11cd7be8767fa59e97ec895829628c5

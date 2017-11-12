@@ -2,12 +2,8 @@
 ''' Preprocessing module containing all methods of data cleansing and
     tokenizing,stemming as well as stopword removal. '''
 
-import csv
-
 import sys
 sys.path.append('../')
-
-import pandas as pd
 
 import tokenize as tkn
 import utilities.io as io
@@ -16,54 +12,35 @@ class Preprocessor(object):
     ''' Preprocesses data with different methods. '''
 
     def __init__(self, session, listings_data, listings_text_data, reviews_data):
-        self.s = session
+        self.crawl = False
+        self.ses = session
         self.listings = listings_data
         self.listings_text = listings_text_data
         self.reviews = reviews_data
 
-    # See commit 8f9d8e1f for implementation of csv.
+    # See commit 8f9d8e1f for implementation of writing results to a .csv.
     def check_onair(self):
         ''' Checks how many of the listing ids are still online@Airbnb. '''
         air_url = 'https://www.airbnb.de/rooms/'
         ids = self.listings['id']
         num_apts = len(ids)
-        
-        res_path = '../data/playground/results_on_air.csv'
-        results = io.read_csv(res_path)['id'].tolist()
-        total = len(results)
-
-        # Write results to csv file, because 50k listings take a long time.
-        # With results written to a file, we can split the process in several runs.
-        with open(io.get_universal_path(res_path), 'a+', newline='') as f:
-            writer = csv.writer(f, delimiter=',')
-
-            for i in ids.tolist():
-
-                if i in results:
-                    print('Bereits vorhanden:' + str(i))
-                    continue
-
-                url = air_url + str(i)
-                total += 1
-                try:
-                    # content-length only in header if listing is not available anymore (not on Air)
-                    r = self.s.get(url).headers.__getitem__('content-length')
-                    num_apts -= 1
-
-                    writer.writerow([i, 0])
-                    sys.stdout.write('\rTotal: ' + str(total))
-                
-                except KeyError:
-
-                    writer.writerow([i, 1])
-                    sys.stdout.write('\rTotal: ' + str(total))
-
-            #print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
+        for i in ids.tolist():
+            url = air_url + str(i)
+            try:
+                # content-length only in header if listing is not available anymore (not on Air)
+                content_length = self.ses.get(url).headers.__getitem__('content-length')
+                print(str(i) + ' is not on Air anymore; content-length: ' + str(content_length))
+                num_apts -= 1
+            except KeyError:
+                print(str(i) + 'is still on Air.')
+        print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
         # Order of this process, see process_order.txt
-        self.check_onair()
+        if self.crawl:
+            self.check_onair()
+        io.remove_empty_lines_df(self.listings, ['id', 'host_id', 'square_feet'])
 
 def process_listings(listings):
     ''' Process listings and split into two files,

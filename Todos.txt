@@ -1,32 +1,33 @@
+Tasks:
+    DONE: fertig
+    TBA : to be assigned
+    0X -: zugewiesen, noch nicht erledigt
+
 DONE Daten Sammeln
-2- andere Features Crawlen?
-3- Straßen auf Bezirk Mappen  - wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen [Nadja]
-4- Nur Wohnungen nutzen die noch existieren - rausfiltern - wie viele fliegenr raus? sinnvoll?[Nico]
-5- Daten Visualisieren - Bewertungen Attribute, Bezirke, Heatmap - Datenset kennenlernen [ALLE]
-6- nur EN reviews  [KERSTIN]
-DONE -Filtern welche Attribute interessant sind ->  - mappen von Values 
+DONE (andere Features crawlen): Airbnb erlaubt kein crawlen ohne IP zu blocken
+03 - Straßen auf Bezirk Mappen  - wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen [Nadja]
+DONE Nur Wohnungen nutzen die noch existieren - rausfiltern - wie viele fliegenr raus? sinnvoll? [Nico]: Untersuchung von 0.5% der Daten (~250 Listings) ergab, dass 70% der Listings immer noch online sind
+05 - Daten Visualisieren - Heatmap [Helene]
+DONE Bewertungen Attribute, Bezirke, - Datenset kennenlernen [ALLE]
+06 - nur EN reviews [Kerstin]
+DONE Filtern welche Attribute interessant sind ->  - mappen von Values 
 DONE datenset jeder ansehen die ersten 1000  Einträge Spalte für Spalte
-9- Kommata rausmachen Nico
-10- how to handel nan values in rows?
-11- host location make the values binary - 1 in london 0- outside london [DENNIS]
-12- host response rate - in buckets ? Equal width?
-DONE host_neighbourhood & host_total_listings_count & street  & city & requires_license RAUS
+DONE Kommata rausmachen Nico: Nur die \n müssen rausgeparst werden bei Text. normale preprocessing Schritte, die in jeder Aufgabe anfallen
+DONE how to handle NaN values in rows? [Nico] -> entscheiden, ob row deshalb gedroppt werden soll. Depends, wie viele examples gehen dadurch verloren? Mal mit dataset bei dem es zu jeder listing ID ein review gibt probieren und mal mit allen listings, egal ob reviews vorhanden sind
+11 - host location make the values binary - 1 in london 0 - outside london [Dennis]
+TBA  host response rate - in buckets ? Equal width/frequency?
+DONE host_neighbourhood & host_total_listings_count & street & city & requires_license RAUS
 DONE host_listings_counts raus weil der calculated house_listings genauer aussieht
-14- host verification einzelne values in spalten umwandeln
+TBA  host verification einzelne values in spalten umwandeln
 EVTL raus neighbourhood
-16  - zip code all upper case- double entries map to first key [NADJA]
-17 - was machen wir mit square feet? Column nicht ausgefüllt
-18 - data type of price is polynomial>> change to real - remove  $ before numbers[HELENE]
-19 - reviews_XX so wichtig? wie damit umgehen?
-20 - wie errechnet sich review-score [HELENE]
-21 - Einträge raus bei denen host_id oder host_name null 
+16 - zip code all upper case - double entries map to first key [Nadja]
+DONE was machen wir mit square feet? Column nicht ausgefüllt [Nico] -> hab die square feets mal rausgenommen, ist aber einfach umzukehren in der process() methode
+18 - data type of price is polynomial -> change to real by removing $ before numbers [Helene]
+TBA  reviews_XX so wichtig? wie damit umgehen? 
+DONE wie errechnet sich review-score [Helene] -> Bewertungen setzen sich nicht zusammen aus 5 unter review scores zu einem übergeordneten, der overall score wird separat angegeben
+DONE Einträge raus bei denen host_id oder host_name null [Nico] -> method calls of io.remove_empty_line_df in Preprocessor.process()
 
-
-
-
-
-
-Pesentation 
-- reviews_xx veranschaulichen >> & implicationen erläutern
+Presentation:
+    reviews_xx veranschaulichen >> & implicationen erläutern (see RapidMiner statistics)
 
 
