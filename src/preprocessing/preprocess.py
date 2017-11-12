@@ -20,33 +20,45 @@ class Preprocessor(object):
         self.listings = listings_data
         self.listings_text = listings_text_data
         self.reviews = reviews_data
-  
+
+    # See commit 8f9d8e1f for implementation of csv.
     def check_onair(self):
+        ''' Checks how many of the listing ids are still online@Airbnb. '''
         air_url = 'https://www.airbnb.de/rooms/'
         ids = self.listings['id']
         num_apts = len(ids)
+        
         res_path = '../data/playground/results_on_air.csv'
         results = io.read_csv(res_path)['id'].tolist()
         total = len(results)
+
+        # Write results to csv file, because 50k listings take a long time.
+        # With results written to a file, we can split the process in several runs.
         with open(io.get_universal_path(res_path), 'a+', newline='') as f:
             writer = csv.writer(f, delimiter=',')
+
             for i in ids.tolist():
+
                 if i in results:
                     print('Bereits vorhanden:' + str(i))
                     continue
+
                 url = air_url + str(i)
                 total += 1
                 try:
-                    # content-length only in header if listing is not available anymore. not on air
+                    # content-length only in header if listing is not available anymore (not on Air)
                     r = self.s.get(url).headers.__getitem__('content-length')
                     num_apts -= 1
+
                     writer.writerow([i, 0])
                     sys.stdout.write('\rTotal: ' + str(total))
+                
                 except KeyError:
-                    #pass
+
                     writer.writerow([i, 1])
                     sys.stdout.write('\rTotal: ' + str(total))
-            print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
+
+            #print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
