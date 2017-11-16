@@ -4,11 +4,31 @@ Tasks:
     0X -: zugewiesen, noch nicht erledigt
 
 NO - Straßen auf Bezirk Mappen -> wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen 
-05 - Daten Visualisieren - Heatmap [Helene]
+05 - AT THE END  - Daten Visualisieren - Heatmap [Helene]
+
+FRAGEN FÜR DIE REVIEW SESSION MIT DEN PROFS - BIS SONNTAG ABEND SAMMELN
+01 - Listings, reviews preprocessing - Stemming usw durchführen [NICO]
+02 - Label aus den Ratings erstellen  [! Ratings überwiegend gut]
+03 - mit den REviews - nur CV da nicht für neue
+04 - ohne Reviews - dann können wir mit den Eigenschaften der Wohnung das Rating vorhersagen
+!! vll kurz vor dem anwenden einer Methode das ein oder andere Attribut ausschließen
+07 - KMEANS
+08 - Number of Reviews <=3 ausschließen
+09 - Verschiedene Datasets mit verschiedenen Anzahlen an Labels bereitstellen [NICO]
+10 - Grid Search CV ansehen
+11 - KMEANS
+Die folgenden Classifier mit Kurven und so plotten:
+1 File anlegen und dann da die classification für die verschiedenen Listings benutzen
+12 - KNN [KERSTIN]
+13 - Naive Bayes [HELENE]
+TBA - Nearest Centroid []
+15 - Support Vector machines [Decision Boundaries] [NADJA]
+16 - Decision Trees [DENNIS]
+
 DONE - nur EN reviews [Kerstin]
-11 - host location make the values binary - 1 in london 0 - outside london [Dennis]
-18 - data type of price is polynomial -> change to real by removing $ before numbers [Helene]
-22 - host response rate - in buckets ? Equal width/Equal frequency/Binary? [Nico]
+DONE host location make the values binary - 1 in london 0 - outside london [Dennis]
+DONE data type of price is polynomial -> change to real by removing $ before numbers [Helene]
+DONE host response rate - in buckets ? Equal width/Equal frequency/Binary? [Nico]
 DONE Daten Sammeln
 DONE (andere Features crawlen): Airbnb erlaubt kein crawlen ohne IP zu blocken
 DONE Nur Wohnungen nutzen die noch existieren - rausfiltern - wie viele fliegenr raus? sinnvoll? [Nico]: Untersuchung von 0.5% der Daten (~250 Listings) ergab, dass 70% der Listings immer noch online sind
@@ -27,10 +47,11 @@ DONE Einträge raus bei denen host_id oder host_name null [Nico] -> method calls
 TBA  reviews_xx wie damit umgehen? -> Einmal classification mit und ohne reviews, da halt jeweils drin/raus
 TBA  evtl. raus neighbourhood -> Mal mit/ohne probieren
 
-Trouble Shooting:
-    - listings were ID and ZIP code are not given - filtered out (autom.) during the zip code cleanse - correct handling ?
+
 
 Presentation:
     - reviews_xx veranschaulichen >> & implicationen erläutern (see RapidMiner statistics)
 
+
+Report wir gehen davon aus dass die Listings ehrlich sind und die gegebenen Informationen richtig sind
 
