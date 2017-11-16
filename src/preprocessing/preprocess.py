@@ -1,8 +1,6 @@
 
 ''' Preprocessing module containing all methods of data cleansing and
-    tokenizing,stemming as well as stopword removal. '''
-
-import tokenize as tkn
+    tokenizing, stemming as well as stopword removal. '''
 
 from src.utilities import io
 
@@ -15,6 +13,7 @@ class Preprocessor(object):
         self.listings = listings_data
         self.listings_text = listings_text_data
         self.reviews = reviews_data
+        self.removal_ids = set()
 
     # See commit 8f9d8e1f for implementation of writing results to a .csv.
     def check_onair(self):
@@ -32,28 +31,33 @@ class Preprocessor(object):
             except KeyError:
                 print(str(i) + ' is still on Air.')
         print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
-    
+
     ### Insert methods here
     #def example_method(self, further_parameters, default_parameter=5):
     #    print('this is a ' + str(further_parameters) + ' with default_parameter=' + str(default_parameter))
 
     ###
 
+    def bin_host_rate(self, dct):
+        print()
+
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
         # Crawl Airbnb.com page and check if listings are still available
         if self.crawl:
             self.check_onair()
-        # Remove lines from pandas dataframe with empty values in columns id, host_id and square_feet
-        io.remove_empty_lines_df(self.listings, ['id', 'host_id', 'square_feet'])
-        
+        # Remove lines from pandas dataframe with empty values in columns id, host_id (and square_feet)
+        io.remove_empty_lines_df(self.listings, ['id', 'host_id'])#, 'square_feet'])
+
+        dct = io.get_column_as_dict_df(self.listings, 'host_rate')
+        print(dct)
         ### Insert method calls here
         #self.example_method('test')
         #self.example_method(further_parameters='test') #same result
         #self.example_method(further_parameters='test', 4) #different default parameter
         #self.example_method(further_parameters='test', default_parameter=4) #same result again
 
-        
+
         ###
 
         # After all processing steps are done in listings and listings_text_processed, merge them on key = 'id'
@@ -63,7 +67,7 @@ class Preprocessor(object):
         # Maybe we have to overthink this (for example: do we have columns with the same name in the processed listings_text and reviews?
         #                                  Avoid this by appending _lt or _rev at the new columns' names)
         self.listings = io.merge_df(self.listings, self.reviews, 'id')
-        
+
         # After all processing steps are done, write the listings file to the playground (this will be changed to ../data/final/_.csv)
         #io.write_csv(self.listings, '../data/playground/dataset.csv')
 

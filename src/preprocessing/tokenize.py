@@ -16,4 +16,5 @@ class SnowballTokenizer(object):
         return [self.stemmer.stem(t) for t in self.token_pattern.findall(doc)]
 
     def stem(self, word):
+        ''' Print the stem of one specific word (for testing purposes). '''
         print(self.stemmer.stem(word))

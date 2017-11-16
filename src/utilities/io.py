@@ -14,7 +14,7 @@ def remove_line_df(df, col_name, value):
     ''' Remove a line from a dataframe in the given column with a specific value.
         If more than one line apply, remove all of them.
         The current implementation regards the removal of lines e.g. with a single id.
-        This can be altered (-> written in another method) to remove lines with e.g. price > value. '''
+        This can be altered (-> in another method) to remove lines with e.g. price > val. '''
     df = df[getattr(df, col_name) != value]
     return df
 
@@ -53,6 +53,9 @@ def append_column_df(df, col_name, dct, key='id'):
     '''
     df[col_name] = df[key].map(dct)
     return df
+
+def get_column_as_dict_df(df, col_name):
+    return pd.Series(getattr(df, col_name).values, index=df.id).to_dict()
 
 def merge_df(df, df_m, key='id'):
     ''' Merge two dataframes on the given key. (Suitable for merging listings_processed and listings_text_processed.) '''

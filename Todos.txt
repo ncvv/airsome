@@ -3,14 +3,12 @@ Tasks:
     TBA : to be assigned
     0X -: zugewiesen, noch nicht erledigt
 
-EVTL raus neighbourhood
-TBA  reviews_XX so wichtig? wie damit umgehen? 
-TBA  host response rate - in buckets ? Equal width/frequency?
-03 - [RAUS]Straßen auf Bezirk Mappen  - wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen 
+NO - Straßen auf Bezirk Mappen -> wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen 
 05 - Daten Visualisieren - Heatmap [Helene]
 06 - nur EN reviews [Kerstin]
 11 - host location make the values binary - 1 in london 0 - outside london [Dennis]
 18 - data type of price is polynomial -> change to real by removing $ before numbers [Helene]
+22 - host response rate - in buckets ? Equal width/Equal frequency/Binary? [Nico]
 DONE Daten Sammeln
 DONE (andere Features crawlen): Airbnb erlaubt kein crawlen ohne IP zu blocken
 DONE Nur Wohnungen nutzen die noch existieren - rausfiltern - wie viele fliegenr raus? sinnvoll? [Nico]: Untersuchung von 0.5% der Daten (~250 Listings) ergab, dass 70% der Listings immer noch online sind
@@ -26,13 +24,13 @@ DONE zip code all upper case - double entries map to first key [Nadja]
 DONE was machen wir mit square feet? Column nicht ausgefüllt [Nico] -> hab die square feets mal rausgenommen, ist aber einfach umzukehren in der process() methode
 DONE wie errechnet sich review-score [Helene] -> Bewertungen setzen sich nicht zusammen aus 5 unter review scores zu einem übergeordneten, der overall score wird separat angegeben
 DONE Einträge raus bei denen host_id oder host_name null [Nico] -> method calls of io.remove_empty_line_df in Preprocessor.process()
+TBA  reviews_xx wie damit umgehen? -> Einmal classification mit und ohne reviews, da halt jeweils drin/raus
+TBA  evtl. raus neighbourhood -> Mal mit/ohne probieren
 
-TROUBLE SHOOTING:
-listings were ID and ZIP code are not given - filtered out (autom.) during the zip code cleanse - correct handling ?
-
-
+Trouble Shooting:
+    - listings were ID and ZIP code are not given - filtered out (autom.) during the zip code cleanse - correct handling ?
 
 Presentation:
-    reviews_xx veranschaulichen >> & implicationen erläutern (see RapidMiner statistics)
+    - reviews_xx veranschaulichen >> & implicationen erläutern (see RapidMiner statistics)
 
 
