@@ -2,15 +2,12 @@
 ''' Preprocessing module containing all methods of data cleansing and
     tokenizing, stemming as well as stopword removal. '''
 
-<<<<<<< HEAD:src/preprocessing/preprocess.py
 from src.utilities import io
 from langdetect import detect
-=======
 import io_util as io
 
 import pandas as pd
 import numpy as np
->>>>>>> 50629797a18db5686df285c4158ca4249438a495:src/preprocess.py
 
 class Preprocessor(object):
     ''' Preprocesses data with different methods. '''
@@ -61,6 +58,23 @@ class Preprocessor(object):
             else:
                 row['host_location'] = 0
             writer.writerow(row)     
+    ###Remove English Reviews
+    ###Ich weiß nicht ob das so funktioniert, bzw. ob ich es richtig integriert habe
+    def check_language(self):
+    com = self.reviews['comments']
+
+    for i in range(0,len(com)):
+        string = com[i]
+        language_list = []
+        lang = detect(string)
+        language_list.append(lang)
+
+    j = 0
+    for j in range(0,len(language_list)):
+        index_list = []
+        if language_list[j] != ['en']:
+        index_list.append(j)
+        j = j + 1
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
