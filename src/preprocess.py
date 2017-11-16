@@ -1,12 +1,11 @@
 
 ''' Preprocessing module containing all methods of data cleansing and
-    tokenizing,stemming as well as stopword removal. '''
+    tokenizing, stemming as well as stopword removal. '''
 
-import sys
-sys.path.append('../')
+import io_util as io
 
-import tokenize as tkn
-import utilities.io as io
+import pandas as pd
+import numpy as np
 
 class Preprocessor(object):
     ''' Preprocesses data with different methods. '''
@@ -17,6 +16,7 @@ class Preprocessor(object):
         self.listings = listings_data
         self.listings_text = listings_text_data
         self.reviews = reviews_data
+        self.removal_ids = [15896822] # Test value so list is not empty
 
     # See commit 8f9d8e1f for implementation of writing results to a .csv.
     def check_onair(self):
@@ -34,40 +34,43 @@ class Preprocessor(object):
             except KeyError:
                 print(str(i) + ' is still on Air.')
         print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
-    
-    ### Insert methods here
-    #def example_method(self, further_parameters, default_parameter=5):
-    #    print('this is a ' + str(further_parameters) + ' with default_parameter=' + str(default_parameter))
 
-    ###
+    def bin_host_rate(self, df):
+        ''' Bin the values of host_response_rate (equal width/frequency or even binary). '''
+        bins = [0, 50, 95, 100]
+        grp_names = ['Bad', 'Medium', 'Good']
+        pd.options.mode.chained_assignment = None
+        df['host_response_rate'] = df['host_response_rate'].apply(lambda x: int(x.replace('%', '')))
+        df['hrr_bins'] = pd.cut(df['host_response_rate'], bins, labels=grp_names)
+        df.loc[df['host_response_rate'] == 0, 'hrr_bins'] = 'Bad'
+        return df
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
         # Crawl Airbnb.com page and check if listings are still available
         if self.crawl:
             self.check_onair()
-        # Remove lines from pandas dataframe with empty values in columns id, host_id and square_feet
-        io.remove_empty_lines_df(self.listings, ['id', 'host_id', 'square_feet'])
-        
-        ### Insert method calls here
-        #self.example_method('test')
-        #self.example_method(further_parameters='test') #same result
-        #self.example_method(further_parameters='test', 4) #different default parameter
-        #self.example_method(further_parameters='test', default_parameter=4) #same result again
 
-        
-        ###
+        # Remove lines from pandas dataframe with empty values in column host_response_rate
+        self.listings = self.listings.dropna(subset = ['host_response_rate'])
+
+        # Bin the host response rate
+        self.listings = self.bin_host_rate(self.listings)
+
+
+        # Remove all of the ids in removal_ids from the listings
+        self.listings = io.remove_lines_by_id_df(self.listings, self.removal_ids)
 
         # After all processing steps are done in listings and listings_text_processed, merge them on key = 'id'
-        self.listings = io.merge_df(self.listings, self.listings_text, 'id')
+        #self.listings = io.merge_df(self.listings, self.listings_text, 'id')
 
         # After all processing setps are done in reviews.csv and processed text is grouped by id, merge it with listings
         # Maybe we have to overthink this (for example: do we have columns with the same name in the processed listings_text and reviews?
         #                                  Avoid this by appending _lt or _rev at the new columns' names)
-        self.listings = io.merge_df(self.listings, self.reviews, 'id')
-        
+        #self.listings = io.merge_df(self.listings, self.reviews, 'id')
+
         # After all processing steps are done, write the listings file to the playground (this will be changed to ../data/final/_.csv)
-        #io.write_csv(self.listings, '../data/playground/dataset.csv')
+        io.write_csv(self.listings, '../data/playground/dataset.csv')
 
 def process_listings(listings):
     ''' Process listings and split into two files,
@@ -80,6 +83,16 @@ def process_listings(listings):
     drop_list.extend(['name', 'summary', 'space', 'host_about', 'access', 'interaction', 'notes']) # text that is dropped
     drop_list.extend(['transit', 'house_rules', 'amenities', 'description', 'neighborhood_overview']) # text that is preserved with listing id in listings_text_processed.csv
     listings.drop(drop_list, axis=1, inplace=True)
+    
+    # Remove lines where value for every column is NaN
+    #listings = listings.dropna(axis=0, how='all')
+    #listings_text = listings_text.dropna(axis=0, how='all')
+
+    # Print type of nan
+    #l = io.get_column_as_list_df(listings, 'host_response_rate')
+    #for i in l:
+    #    if type(i) is not str:
+    #        print(str(type(i)) + ': ' + str(i))
 
     io.write_csv(listings, '../data/processed/listings_processed.csv')
     io.write_csv(listings_text, '../data/processed/listings_text_processed.csv')

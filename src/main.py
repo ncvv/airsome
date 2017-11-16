@@ -1,10 +1,11 @@
 ''' Main entry point of the project, where the program is launched. '''
 
 import requests
-import pandas as pd
 
-import utilities.io as io
-import preprocessing.preprocess as pp
+import io_util as io
+import preprocess as pp
+
+import pandas as pd
 
 def inspect_dataset(dataset):
     ''' Dataset inspection method for getting insights on different features, value examples, .. '''

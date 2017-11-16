@@ -1,35 +1,37 @@
-''' Utility methods '''
+''' Utility methods. '''
 
 import os
 import csv
 
 import pandas as pd
 
+#TBR
+def unique_values(table):
+    ''' Print unique values for table columns '''
+    for col in table:
+        print(col)
+        print(table[col].unique())
+        print('\n')
+
 def remove_column_df(df, col_name):
     ''' Remove a column from a dataframe. '''
     df = df.drop(col_name, axis=1)
     return df
 
-def remove_line_df(df, col_name, value):
+def remove_line_by_id_df(df, value, col_name='id'):
     ''' Remove a line from a dataframe in the given column with a specific value.
         If more than one line apply, remove all of them.
         The current implementation regards the removal of lines e.g. with a single id.
         This can be altered (-> in another method) to remove lines with e.g. price > val. '''
-    df = df[getattr(df, col_name) != value]
+    return df[getattr(df, col_name) != value]
+
+def remove_lines_by_id_df(df, ids):
+    ''' Remove a list or set of ids from the dataframe and return it. '''
+    for i in ids:
+        df = remove_line_by_id_df(df, i)
     return df
 
-def remove_empty_line_df(df, col_name):
-    ''' Remove lines where value is empty in column 'col_name' from the dataframe. '''
-    df = df[pd.notnull(df[col_name])]
-    return df
-
-def remove_empty_lines_df(df, col_names):
-    ''' Remove a list of lines where value is empty from the dataframe. '''
-    for name in col_names:
-        remove_empty_line_df(df, name)
-    return df
-
-def append_column_df(df, col_name, dct, key='id'):
+def append_dict_as_column_df(df, col_name, dct, key='id'):
     ''' Takes a dictionary and appends it as a column to a dataframe based on key values.
         Example:
         >>> d = {'id': [123, 445, 999], 'email': [0, 0, 0]}
@@ -49,13 +51,15 @@ def append_column_df(df, col_name, dct, key='id'):
              id     email
         0    123    'abc@gmail.de'
         1    445    'ABC@mail.uni-mannheim.de'
-        2    999    NaN
-    '''
+        2    999    NaN                         '''
     df[col_name] = df[key].map(dct)
     return df
 
 def get_column_as_dict_df(df, col_name):
-    return pd.Series(getattr(df, col_name).values, index=df.id).to_dict()
+    return pd.Series(df[col_name].values.tolist(), index=df['id'].values.tolist()).to_dict()
+
+def get_column_as_list_df(df, col_name):
+    return df[col_name].values.tolist()
 
 def merge_df(df, df_m, key='id'):
     ''' Merge two dataframes on the given key. (Suitable for merging listings_processed and listings_text_processed.) '''
@@ -63,7 +67,7 @@ def merge_df(df, df_m, key='id'):
 
 def read_csv(path):
     ''' Read in a .csv file and return it as a pandas df. '''
-    return pd.read_csv(get_universal_path(path))
+    return pd.read_csv(get_universal_path(path), encoding='utf-8')
 
 def append_line_csv(path, lst):
     ''' Append a list of one or more lines to an existing csv file. '''
