@@ -20,7 +20,8 @@ class Preprocessor(object):
         self.listings = listings_data
         self.listings_text = listings_text_data
         self.reviews = reviews_data
-        self.removal_ids = [15896822] # Test value so list is not empty
+        self.removal_ids = [15896822] # Test value so list is not empty, for testing purposes
+        self.review_removal_ids = [15896822] # Test value so list is not empty, for testing purposes
 
     # See commit 8f9d8e1f for implementation of writing results to a .csv.
     def check_onair(self):
@@ -51,70 +52,33 @@ class Preprocessor(object):
     
     def bin_host_location(self, df):
         df['host_location'] = df['host_location'].apply(lambda x: 1 if 'lon' in str(x).lower() else 0)
-        print(df['host_location'])
-        '''for row in reader:
-            if "lon" in row['host_location'].lower():
-                row['host_location'] = 1
-            else:
-                row['host_location'] = 0
-            writer.writerow(row)'''
+        return df
 
-    def clean(self, df):
+    def clean_zipcodes(self, df):
         ''' Clean the zipcodes and write to clean_zipcodes.csv '''
-
-        ''' Problem:
-            15109570,"SE1 5QL
-
-            SE1 5QL"
-            9473453,SE22 0HF '''
-
-        zipcode_col = df[['id', 'zipcode']]
-
-        # make them all upper case
-        zipcode_col['zipcode'] = zipcode_col['zipcode'].map(lambda x: str(x).upper())
-        uppercase = zipcode_col
-        #print(uppercase.shape)
-        # make it a list with strings
-        list_str = uppercase['zipcode'].astype(str).values.tolist()
-
-        # manipulate data
-        # for each value in column - get value - trim  - remove " - split - just take first entry as new cleaned
-        list_clean = []
-        for idx in list_str:
-            val = idx
-            splits = re.split(r'\s+', val.strip().replace('\"', ''))
-            if not splits[0]:
-                clean_zip_val = np.nan
-            elif splits[0].isalnum():
-                clean_zip_val = splits[0]
+        dct = io.get_column_as_dict_df(df, 'zipcode')
+        for i, zc in dct.items():
+            if zc is not None and zc is not np.nan:
+                zc = str(zc).upper() 
+                split = re.split(r'\s+', zc.strip().replace('\"', ''))
+                if split[0].isalnum():
+                    dct[i] = split[0]
+                else:
+                    dct[i] = np.nan
             else:
-                clean_zip_val = np.nan
-            list_clean.append(clean_zip_val)
+                dct[i] = np.nan
+        return dct
 
-        # @Nadja what should this line do?
-        zipcode_col[:1]
-        clean_zipcodes = zipcode_col.assign(zipcode=list_clean)
+    def delete_dollar(self, df):
+        df['price'] = df['price'].apply(lambda x: float(x.replace('$', '').split('.')[0].replace(',', '.')))
+        return df
 
-        io.write_csv(clean_zipcodes, '../data/playground/clean_zipcodes.csv')
-        #if zipcode_col.shape[0] == uppercase.shape[0] and uppercase.shape[0] == whole_file.shape[0]:
-        #    print("All rows still intact! :)")
-
-    def check_language(self):
+    def check_language(self, df):
         ''' Remove English reviews. '''
-        com = self.reviews['comments']
-
-        for i in range(0,len(com)):
-            string = com[i]
-            language_list = []
-            lang = detect(string)
-            language_list.append(lang)
-
-        j = 0
-        for j in range(0,len(language_list)):
-            index_list = []
-            if language_list[j] != ['en']:
-                index_list.append(j)
-                j = j + 1
+        dct = io.get_column_as_dict_df(df, 'comments')
+        for i, comment in dct.items():
+            if detect(comment) != 'en':
+                self.review_removal_ids.append(i)
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
@@ -123,18 +87,22 @@ class Preprocessor(object):
             self.check_onair()
 
         # Remove lines from pandas dataframe with empty values in column host_response_rate
-        self.listings = self.listings.dropna(subset = ['host_response_rate'])
-
-        # Bin the host response rate
-        self.listings = self.bin_host_rate(self.listings)
-        #### REPLACE df mit self.listings
-
-        self.listings = self.bin_host_location(self.listings)
-
+        self.listings.loc[:, ['zipcode']].fillna(np.nan, inplace=True)
+        self.listings = self.listings.dropna(subset=['host_response_rate'])
+        self.listings = self.listings.dropna(subset=['review_scores_rating'])
+        self.listings = self.listings.dropna(subset=['zipcode'])
         
+        dct = self.clean_zipcodes(self.listings)
+        io.append_dict_as_column_df(self.listings, 'zipcode', dct)
+        self.listings = self.listings.dropna(subset=['zipcode'])
+
+        self.listings = self.bin_host_rate(self.listings)
+        self.listings = self.bin_host_location(self.listings)
+        self.listings = self.delete_dollar(self.listings)
 
         # Remove all of the ids in removal_ids from the listings
         self.listings = io.remove_lines_by_id_df(self.listings, self.removal_ids)
+        self.reviews = io.remove_lines_by_id_df(self.listings, self.review_removal_ids)
 
         # After all processing steps are done in listings and listings_text_processed, merge them on key = 'id'
         #self.listings = io.merge_df(self.listings, self.listings_text, 'id')
