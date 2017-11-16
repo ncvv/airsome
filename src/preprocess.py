@@ -45,7 +45,7 @@ class Preprocessor(object):
         df.loc[df['host_response_rate'] == 0, 'hrr_bins'] = 'Bad'
         return df
 
-    def Change_into_Bin_host_location():
+    def Change_into_Bin_host_location(self):
      with open('../data/processed/listings_processed.csv', 'r') as infile, open('../data/playground/neu1.csv', 'w') as outfile:
        reader = DictReader(infile)
        writer = DictWriter(outfile, fieldnames=reader.fieldnames)
