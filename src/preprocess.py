@@ -2,8 +2,11 @@
 ''' Preprocessing module containing all methods of data cleansing and
     tokenizing, stemming as well as stopword removal. '''
 
+<<<<<<< HEAD:src/preprocess.py
 import re
 
+=======
+>>>>>>> 7caffb0d87d55d129d281834f85f6a06c7d63d15:src/preprocess.py
 import io_util as io
 
 import pandas as pd
@@ -47,6 +50,15 @@ class Preprocessor(object):
         df.loc[df['host_response_rate'] == 0, 'hrr_bins'] = 'Bad'
         return df
     
+    def bin_host_location(self, df):
+        df['host_location'] = df['host_location'].apply(lambda x: 1 if 'lon' in x.lower() else 0)
+        for row in reader:
+            if "lon" in row['host_location'].lower():
+                row['host_location'] = 1
+            else:
+                row['host_location'] = 0
+            writer.writerow(row)
+
     def clean(self, df):
         ''' Clean the zipcodes and write to clean_zipcodes.csv '''
 
@@ -98,6 +110,9 @@ class Preprocessor(object):
 
         # Bin the host response rate
         self.listings = self.bin_host_rate(self.listings)
+        #### REPLACE df mit self.listings
+
+        self.listings = self.bin_host_location(self.listings)
 
         
 
