@@ -2,11 +2,10 @@
 ''' Preprocessing module containing all methods of data cleansing and
     tokenizing, stemming as well as stopword removal. '''
 
-<<<<<<< HEAD:src/preprocess.py
 import re
 
-=======
->>>>>>> 7caffb0d87d55d129d281834f85f6a06c7d63d15:src/preprocess.py
+from langdetect import detect
+
 import io_util as io
 
 import pandas as pd
@@ -51,13 +50,14 @@ class Preprocessor(object):
         return df
     
     def bin_host_location(self, df):
-        df['host_location'] = df['host_location'].apply(lambda x: 1 if 'lon' in x.lower() else 0)
-        for row in reader:
+        df['host_location'] = df['host_location'].apply(lambda x: 1 if 'lon' in str(x).lower() else 0)
+        print(df['host_location'])
+        '''for row in reader:
             if "lon" in row['host_location'].lower():
                 row['host_location'] = 1
             else:
                 row['host_location'] = 0
-            writer.writerow(row)
+            writer.writerow(row)'''
 
     def clean(self, df):
         ''' Clean the zipcodes and write to clean_zipcodes.csv '''
@@ -96,8 +96,25 @@ class Preprocessor(object):
         clean_zipcodes = zipcode_col.assign(zipcode=list_clean)
 
         io.write_csv(clean_zipcodes, '../data/playground/clean_zipcodes.csv')
-        if zipcode_col.shape[0] == uppercase.shape[0] and uppercase.shape[0] == whole_file.shape[0]:
-            print("All rows still intact! :)")
+        #if zipcode_col.shape[0] == uppercase.shape[0] and uppercase.shape[0] == whole_file.shape[0]:
+        #    print("All rows still intact! :)")
+
+    def check_language(self):
+        ''' Remove English reviews. '''
+        com = self.reviews['comments']
+
+        for i in range(0,len(com)):
+            string = com[i]
+            language_list = []
+            lang = detect(string)
+            language_list.append(lang)
+
+        j = 0
+        for j in range(0,len(language_list)):
+            index_list = []
+            if language_list[j] != ['en']:
+                index_list.append(j)
+                j = j + 1
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
