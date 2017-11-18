@@ -97,12 +97,16 @@ class Preprocessor(object):
         df.drop('host_verifications', axis=1, inplace=True)
         return df
     
-    def create_label(self, df):
+    def create_label(self, df, num_labels):
         label_name = 'perceived_quality'
-        #bins = [0, 65, 75, 90, 95, 100]
-        #grp_names = ['Catastrophic', 'Bad', 'Medium', 'Good', 'Very Good']
-        bins = [0, 93, 100]
-        grp_names = ['Bad', 'Good']
+        if num_labels == 2:
+            bins = [0, 93, 100]
+            grp_names = ['Bad', 'Good']
+        elif num_labels == 5:
+            bins = [0, 65, 75, 90, 95, 100]
+            grp_names = ['Catastrophic', 'Bad', 'Medium', 'Good', 'Very Good']
+        else:
+            return df
         df[label_name] = pd.cut(df['review_scores_rating'], bins, labels=grp_names)
         df.drop('review_scores_rating', axis=1, inplace=True)
         return df
@@ -134,7 +138,7 @@ class Preprocessor(object):
         self.listings = self.delete_dollar(self.listings)
 
         # Create and append label
-        self.listings = self.create_label(self.listings)
+        self.listings = self.create_label(self.listings, 2)
 
         # Remove reviews that are not english
         #self.reviews = self.reviews.dropna(axis=0, how='any')
