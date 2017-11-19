@@ -57,7 +57,6 @@ class Preprocessor(object):
                 row['host_location'] = 1
             else:
                 row['host_location'] = 0
-<<<<<<< HEAD
             writer.writerow(row)  
 
 def delete_dollar(self):
@@ -70,7 +69,6 @@ def delete_dollar(self):
             writer.writerow(line) 
 
 
-=======
             writer.writerow(row)     
     ###Remove English Reviews
     ###Ich weiß nicht ob das so funktioniert, bzw. ob ich es richtig integriert habe
@@ -89,7 +87,6 @@ def delete_dollar(self):
         if language_list[j] != ['en']:
         index_list.append(j)
         j = j + 1
->>>>>>> 4cb51673661b53b893ae9981062d4f5101b25f0a
 
     def process(self):
         ''' Main preprocessing method where all parts are tied together. '''
