@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn import tree
 from sklearn.model_selection import cross_val_score
 from sklearn.utils.multiclass import unique_labels
+
 from sklearn.neighbors import KNeighborsClassifier
 
 def naive_bayes(dataset):
