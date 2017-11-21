@@ -81,3 +81,13 @@ def knn(dataset, knn_estimator, data_train, target_train, data_test, target_test
 
     accuracy = knn_estimator.score(target_test, predict)
     print('Accuracy of KNN Classifier:{}'.format(accuracy))
+
+def split_dataset_specific(data, target, test_size, stratify_target):
+    if (stratify_target):
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42, stratify=target)
+    else:
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42)
+    return data_train, data_test, target_train, target_test
+
+def split_dataset_regular(data, target):
+    return split_dataset_specific(data, target, test_size=0.2, stratify_target=True)
