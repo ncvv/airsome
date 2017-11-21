@@ -1,6 +1,9 @@
 import pandas as pd
 import io_util as io
 import numpy as np
+
+from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import GaussianNB
 import graphviz
 import pydotplus
 from sklearn.externals.six import StringIO
@@ -9,15 +12,12 @@ from sklearn.metrics import accuracy_score
 from sklearn import tree
 from sklearn.model_selection import cross_val_score
 from sklearn.utils.multiclass import unique_labels
+from category_encoders.ordinal import OrdinalEncoder
+
 
 def naive_bayes(dataset):
     '''Trains and tests a Naive Bayes Classifier with selected features'''
     ###können wir das nicht für alle methoden verwenden bis zu data_train, data_test,...?
-    from sklearn.naive_bayes import GaussianNB
-    from sklearn.model_selection import train_test_split
-    from category_encoders.ordinal import OrdinalEncoder
-    from sklearn.metrics import accuracy_score
-    
     encoder = OrdinalEncoder()
     dataset_encoded = encoder.fit_transform(dataset)
     listings_data=dataset_encoded.drop(columns=['id','perceived_quality'])
