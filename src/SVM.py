@@ -76,14 +76,13 @@ def one_way(attr, target_label):
 def using_GridSearch(attr, target_label):
     clf = SVC()
     parameters = {
-        'kernel':['linear', 'rbf' ],#'poly',  'sigmoid', 'precomputed'] # POLY läuft heiß bei mir, precomputed gar nicht
+        'kernel':['linear', 'rbf'],#'poly',  'sigmoid', 'precomputed'] # POLY läuft heiß bei mir, precomputed gar nicht
         'C': [1.0, 1.5, 0.5]# penalty parameter
         #'degree': [3,4,5,6,7,8] # for poly only
         #'gamma': [],#Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’. If gamma is ‘auto’ then 1/n_features will be used instead.
         #'coef0': [],#Independent term in kernexl function. It is only significant in ‘poly’ and ‘sigmoid’
         #'tol':[] ,#Tolerance for stopping criterion
         #'decision_function_shape': ['ovo', 'ovr']
-
     }
 
     cv = StratifiedKFold(n_splits=20, shuffle=True, random_state=42)
