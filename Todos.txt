@@ -3,14 +3,39 @@ Tasks:
     TBA : to be assigned
     0X -: zugewiesen, noch nicht erledigt
 
+ROADMAP:
+17 - alle  Spalten die Preise enthalten normalisieren [4] 
+18 - Mail an Sven
+19 - Classifier Evaluation - wie sollen wir das machen? Confusion Matrix , Classification Report? incl F1 Score
+    in eine Methode schreiben? - reuse
+
+20 - Tiefe Knn und Decision Tree - beste Werte bestimmen
+21 - balance data? Training data balancen -> für  precison, recall, f1 report aber keine accuracy - siehe Projekt Intro
+    in eine Methode packen - reuse
+22 - 10 Fold Cross Validation  for Accuracy, F1 Score and AUC
+
+DOC:
+1.Application area and goals [aus der Anmeldung und erweitern] [Kerstin und Dennis ]
+2.Structure and size of the data set (minimum 1 page)[Nadja & Helene]
+3.Preprocessing [Nico]		
+4.Data Mining
+    a) including evaluation setup and evaluation results	
+    b) including different approaches and parameter settings that you tried
+    c) including discussion of the results
+
+
+
 NO - Straßen auf Bezirk Mappen -> wir haben sowohl Adressen als auch Bezirke in der Datei, also müssen wir das glaub nicht machen 
 05 - AT THE END  - Daten Visualisieren - Heatmap [Helene]
-
 FRAGEN FÜR DIE REVIEW SESSION MIT DEN PROFS - BIS SONNTAG ABEND SAMMELN
+
+
 01 - Listings, reviews preprocessing - Stemming usw durchführen [NICO]
 02 - Label aus den Ratings erstellen  [! Ratings überwiegend gut]
-03 - mit den REviews - nur CV da nicht für neue
-04 - ohne Reviews - dann können wir mit den Eigenschaften der Wohnung das Rating vorhersagen
+03? - mit den REviews - nur CV da nicht für neue
+
+
+DONE - ohne Reviews - dann können wir mit den Eigenschaften der Wohnung das Rating vorhersagen
 !! vll kurz vor dem anwenden einer Methode das ein oder andere Attribut ausschließen
 07 - KMEANS
 08 - Number of Reviews <=3 ausschließen
@@ -25,6 +50,7 @@ TBA - Nearest Centroid []
 15 - Support Vector machines [Decision Boundaries] [NADJA]
 16 - Decision Trees [DENNIS]
 
+DONE - saemtliche reviews raus bis auf bis auf 'review_scores_rating'
 DONE - nur EN reviews [Kerstin]
 DONE host location make the values binary - 1 in london 0 - outside london [Dennis]
 DONE data type of price is polynomial -> change to real by removing $ before numbers [Helene]
