@@ -44,7 +44,7 @@ class Preprocessor(object):
         print('{0:.2f}% of Apartments are still on Air.'.format(float(num_apts / len(ids)) * 100))
 
     def bin_host_rate(self, df):
-        ''' Bin the values of host_response_rate (equal width/frequency or even binary). '''
+        ''' Bin the values of host_response_rate. '''
         bins = [0, 50, 85, 99, 100]
         grp_names = ['Bad', 'Medium', 'Good', 'Very Good']
         df['host_response_rate'] = df['host_response_rate'].apply(lambda x: int(x.replace('%', '')))
@@ -54,7 +54,20 @@ class Preprocessor(object):
         return df
     
     def bin_host_location(self, df):
+        ''' Bin the values of host_location. '''
         df['host_location'] = df['host_location'].apply(lambda x: 'inlondon' if 'lon' in str(x).lower() else 'notinlondon')
+        return df
+
+    def bin_host_verification(self, df):
+        ''' Bin the host verification. '''
+        # Host Verifications: {'jumio', 'sent_id', 'sesame', 'linkedin', 'kba', 'manual_offline', 'facebook', 'offline_government_id', 'photographer', 'amex', 'email', 'phone', 'sesame_offline', 'weibo', 'manual_online', 'government_id', 'google', 'reviews', 'selfie'}
+        # Distribution {4: 10142, 3: 5213, 6: 2313, 5: 5078, 2: 339, 7: 475, 8: 78, 1: 10, 9: 5, 10: 1}
+        # Max: 19, Most verification methods for one host: 10, Most ofen: 4
+        bins = [0, 3, 4, 10]
+        grp_names = ['LowerThan4', 'Equals4', 'MoreThan4']
+        df['host_verifications'] = df['host_verifications'].apply(lambda x: int(len(ast.literal_eval(x))))
+        df['host_verification_binned'] = pd.cut(df['host_verifications'], bins, labels=grp_names)
+        df.drop('host_verifications', axis=1, inplace=True)
         return df
 
     def clean_zipcodes(self, df):
@@ -73,6 +86,7 @@ class Preprocessor(object):
         return dct
 
     def delete_dollar(self, df):
+        ''' Delete $ from columns with a price and cast it to int. '''
         df[['price', 'security_deposit', 'cleaning_fee', 'extra_people']] = df[['price', 'security_deposit', 'cleaning_fee', 'extra_people']].applymap(lambda x: float(str(x).replace('$', '').split('.')[0].replace(',', '.')))
         return df
 
@@ -86,17 +100,6 @@ class Preprocessor(object):
             except:
                 self.review_removal_ids.append(i)
 
-    def bin_host_verification(self, df):
-        # Host Verifications: {'jumio', 'sent_id', 'sesame', 'linkedin', 'kba', 'manual_offline', 'facebook', 'offline_government_id', 'photographer', 'amex', 'email', 'phone', 'sesame_offline', 'weibo', 'manual_online', 'government_id', 'google', 'reviews', 'selfie'}
-        # Distribution {4: 10142, 3: 5213, 6: 2313, 5: 5078, 2: 339, 7: 475, 8: 78, 1: 10, 9: 5, 10: 1}
-        # Max: 19, Most verification methods for one host: 10, Most ofen: 4
-        bins = [0, 3, 4, 10]
-        grp_names = ['LowerThan4', 'Equals4', 'MoreThan4']
-        df['host_verifications'] = df['host_verifications'].apply(lambda x: int(len(ast.literal_eval(x))))
-        df['host_verification_binned'] = pd.cut(df['host_verifications'], bins, labels=grp_names)
-        df.drop('host_verifications', axis=1, inplace=True)
-        return df
-    
     def create_label(self, df, num_labels):
         label_name = 'perceived_quality'
         if num_labels == 2:
