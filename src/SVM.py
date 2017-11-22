@@ -65,7 +65,7 @@ def accuracy_per_column(cols, dataset):
 def one_way(attr, target_label):
     clf = SVC(kernel='linear')#, decision_function_shape='ovr')
     #attr = attr.values.reshape(-1,1)
-    data_train, data_test, target_train, target_test = train_test_split(attr, target_label, test_size=0.2, random_state=42, stratify=target_label)
+    data_train, data_test, target_train, target_test =  split_dataset_regular(attr, target_label) #, test_size=0.2, random_state=42, stratify=target_label)
     
     clf.fit(data_train, target_train)
     pred = clf.predict(data_test)
@@ -76,14 +76,13 @@ def one_way(attr, target_label):
 def using_GridSearch(attr, target_label):
     clf = SVC()
     parameters = {
-        'kernel':['linear', 'rbf' ],#'poly',  'sigmoid', 'precomputed'] # POLY läuft heiß bei mir, precomputed gar nicht
+        'kernel':['linear', 'rbf'],#'poly',  'sigmoid', 'precomputed'] # POLY läuft heiß bei mir, precomputed gar nicht
         'C': [1.0, 1.5, 0.5]# penalty parameter
         #'degree': [3,4,5,6,7,8] # for poly only
         #'gamma': [],#Kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’. If gamma is ‘auto’ then 1/n_features will be used instead.
-        #'coef0': [],#Independent term in kernel function. It is only significant in ‘poly’ and ‘sigmoid’
+        #'coef0': [],#Independent term in kernexl function. It is only significant in ‘poly’ and ‘sigmoid’
         #'tol':[] ,#Tolerance for stopping criterion
         #'decision_function_shape': ['ovo', 'ovr']
-
     }
 
     cv = StratifiedKFold(n_splits=20, shuffle=True, random_state=42)
@@ -116,6 +115,16 @@ def encode_hole_dataset(dataset, save, filename):
 def init ():
     listings = io.read_csv('../data/playground/dataset.csv')
     encode_hole_dataset(listings, True, 'encoded_listings')
+
+def split_dataset_specific(data, target, test_size, stratify_target):
+    if (stratify_target):
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42, stratify=target)
+    else:
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42)
+    return data_train, data_test, target_train, target_test
+
+def split_dataset_regular(data, target):
+    return split_dataset_specific(data, target, test_size=0.2, stratify_target=True)
 
 
 #init()

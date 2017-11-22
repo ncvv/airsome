@@ -4,6 +4,7 @@ import os
 import csv
 
 import pandas as pd
+from sklearn.cross_validation import train_test_split
 
 def remove_line_by_id_df(df, value, col_name='id'):
     ''' Remove a line from a dataframe in the given column with a specific value.
@@ -77,3 +78,13 @@ def get_universal_path(file_path):
     ''' Return universal path to file that works on every operating system. '''
     args = file_path.split('/')
     return os.path.join(*args)
+
+def split_dataset_specific(data, target, test_size, stratify_target):
+    if (stratify_target):
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42, stratify=target)
+    else:
+        data_train, data_test, target_train, target_test = train_test_split(data, target, test_size=test_size, random_state=42)
+    return data_train, data_test, target_train, target_test
+
+def split_dataset_regular(data, target):
+    return split_dataset_specific(data, target, test_size=0.2, stratify_target=True)
