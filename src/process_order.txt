@@ -1,2 +1,0 @@
-# Jeder arbeitet mit der listings_processed.csv und listings_text_processed.csv - ground truth for everybody
-# Ordner original/reviews.csv muss jeder lokal liegen haben, die ist noch nicht processed.
