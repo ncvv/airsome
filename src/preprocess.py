@@ -101,6 +101,7 @@ class Preprocessor(object):
                 self.review_removal_ids.append(i)
 
     def create_label(self, df, num_labels):
+        ''' Create the label from review_scores_rating. '''
         label_name = 'perceived_quality'
         if num_labels == 2:
             bins = [0, 93, 100]
@@ -142,6 +143,8 @@ class Preprocessor(object):
 
         # Create and append label
         self.listings = self.create_label(self.listings, 2)
+
+        #self.listings = self.
 
         # Remove reviews that are not english
         #self.reviews = self.reviews.dropna(axis=0, how='any')
