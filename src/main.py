@@ -19,8 +19,9 @@ def main():
     preprocessor = pp.Preprocessor(False, requests.Session(), listings, listings_text, reviews)
     preprocessor.process()
 
-    dataset = io.read_csv('../data/playground/dataset.csv')
+    #dataset = io.read_csv('../data/playground/dataset.csv')
     #classifier = cl.Classifier(dataset)
+    #cl.classify_knn(dataset)
     #classifier.classify_nb()
     #..
     #print(classifier)

@@ -24,10 +24,11 @@ class Classifier(object):
         self.accuracy_nb = 0
         self.accuracy_dt = 0
         self.accuracy_svm = 0
+        self.n = 0
 
         self.encode_and_split()
 
-    # toString() equivalent to Java.
+    #toString() equivalent to Java.
     def __str__(self):
         return "Classification Results:\n" +
                "Accuracy NB:  " + (str('{0:.2f}%'.format(self.accuracy_nb))  if self.accuracy_nb  not 0 else "Not Executed.") + "\n"   +
@@ -51,11 +52,11 @@ class Classifier(object):
         prediction = naive_bayes.predict(self.data_test)
         self.accuracy_nb = accuracy_score(self.target_test, prediction)
 
-    def classify_knn(self, n=7):
-        ''' Classification with K_Nearest_Neighbor. '''
-        knn_estimator = KNeighborsClassifier(n)
-        knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
-        #knn_estimator.fit(self.data_train, self.target_train)
-        prediction = knn_estimator.predict(self.data_test)
-        self.accuracy_knn = knn_estimator.score(self.target_test, prediction)
- 
+    def classify_knn(self, n=1):
+        #''' Classification with K_Nearest_Neighbor. '''
+        for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
+            knn_estimator = KNeighborsClassifier(n)
+            knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
+            #knn_estimator.fit(self.data_train, self.target_train)
+            prediction = knn_estimator.predict(self.data_test)
+            self.accuracy_knn = knn_estimator.score(self.target_test, prediction)
