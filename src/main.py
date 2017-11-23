@@ -8,8 +8,6 @@ import io_util as io
 import preprocess as pp
 #import classifier2 as cl
 
-import pandas as pd
-
 def main(renew_listings=False):
     ''' Main method. '''
     if renew_listings:
@@ -24,7 +22,8 @@ def main(renew_listings=False):
 
     #dataset = io.read_csv('../data/playground/dataset.csv')
     #classifier = cl.Classifier(dataset)
-    #cl.classify_knn(dataset)
+    #for kn in range(1, 10):
+        #classifier.classify_knn(dataset, n=kn)
     #classifier.classify_nb()
     #..
     #print(classifier)

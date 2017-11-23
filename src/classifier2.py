@@ -30,11 +30,11 @@ class Classifier(object):
 
     #toString() equivalent to Java.
     def __str__(self):
-        return "Classification Results:\n" +
-               "Accuracy NB:  " + (str('{0:.2f}%'.format(self.accuracy_nb))  if self.accuracy_nb  not 0 else "Not Executed.") + "\n"   +
-               "Accuracy kNN: " + (str('{0:.2f}%'.format(self.accuracy_knn)) if self.accuracy_knn not 0 else "Not Executed.") + "\n"   +
-               "Accuracy DT:  " + (str('{0:.2f}%'.format(self.accuracy_dt))  if self.accuracy_dt  not 0 else "Not Executed.") + "\n"   +
-               "Accuracy SVM: " + (str('{0:.2f}%'.format(self.accuracy_svm)) if self.accuracy_svm not 0 else "Not Executed.") + "\n\n" +
+        return "Classification Results:\n"
+               "Accuracy NB:  " + (str('{0:.2f}%'.format(self.accuracy_nb))  if self.accuracy_nb  not 0 else "Not Executed.") + "\n"
+               "Accuracy kNN: " + (str('{0:.2f}%'.format(self.accuracy_knn)) if self.accuracy_knn not 0 else "Not Executed.") + "\n"
+               "Accuracy DT:  " + (str('{0:.2f}%'.format(self.accuracy_dt))  if self.accuracy_dt  not 0 else "Not Executed.") + "\n"
+               "Accuracy SVM: " + (str('{0:.2f}%'.format(self.accuracy_svm)) if self.accuracy_svm not 0 else "Not Executed.") + "\n\n"
                "Max.: " + max(self.accuracy_nb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm)
 
     def encode_and_split(self):
@@ -52,11 +52,10 @@ class Classifier(object):
         prediction = naive_bayes.predict(self.data_test)
         self.accuracy_nb = accuracy_score(self.target_test, prediction)
 
-    def classify_knn(self, n=1):
-        #''' Classification with K_Nearest_Neighbor. '''
-        for n in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
-            knn_estimator = KNeighborsClassifier(n)
-            knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
-            #knn_estimator.fit(self.data_train, self.target_train)
-            prediction = knn_estimator.predict(self.data_test)
-            self.accuracy_knn = knn_estimator.score(self.target_test, prediction)
+    def classify_knn(self, n=5):
+        ''' Classification with K_Nearest_Neighbor. '''
+        knn_estimator = KNeighborsClassifier(n)
+        knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
+        #knn_estimator.fit(self.data_train, self.target_train)
+        prediction = knn_estimator.predict(self.data_test)
+        self.accuracy_knn = knn_estimator.score(self.target_test, prediction)
