@@ -113,3 +113,5 @@ Jo.py
 testing.py
 tree.png
 encoded.csv
+data/playground/*
+src/Classifier
