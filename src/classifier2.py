@@ -78,7 +78,7 @@ class Classifier(object):
         acc = nc_estimator.score(self.target_test, prediction)
         if acc > self.accuracy_nc:
             self.accuracy_nc = acc
-    def svm(self ): #, C=1.0, gamma ='auto'):
+    def svm(self ): #, C=1.0, gamma ='auto'): # TODO muss ich hier dann nicht auch die paras übergeben?
         ''' Classification with Support Vector Machine. '''
 
         svc = SVC()
@@ -86,5 +86,5 @@ class Classifier(object):
         prediction = svc.predict(self.data_test)
         self.accuracy_svm = svc.score(self.target_test, prediction)
         acc = svc.score(self.target_test, prediction)
-        if acc > self.accuracy_nc:
+        if acc > self.accuracy_svm:
             self.accuracy_svm = acc

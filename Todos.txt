@@ -3,6 +3,11 @@ Tasks:
     TBA : to be assigned
     0X -: zugewiesen, noch nicht erledigt
 
+QUESTIONS:
+classifier2 - wo werden später die parameter für die Classifier übergeben? oder sind die später fest gecoded?
+
+
+
 ROADMAP:
 17 - alle  Spalten die Preise enthalten normalisieren [4] [NICO]
 18 - Mail an Sven [HELENE]
