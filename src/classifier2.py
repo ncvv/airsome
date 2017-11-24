@@ -8,6 +8,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors.nearest_centroid import NearestCentroid
+from sklearn.svm import SVC
 
 class Classifier(object):
     ''' Class for classification. '''
@@ -41,12 +42,15 @@ class Classifier(object):
 
     def encode_and_split(self):
         ''' Encode datatset and split it into training and test data. '''
+        
+        - #TODO muessen wir das dann anpassen ? 
         encoder = OrdinalEncoder()
+       
         self.dataset_encoded = encoder.fit_transform(self.dataset[['experiences_offered', 'host_location', 'host_response_time', 'host_is_superhost', 'neighbourhood_cleansed', 'review_scores_value', 'instant_bookable', 'cancellation_policy',
                                                                    'require_guest_profile_picture', 'require_guest_phone_verification', 'calculated_host_listings_count', 'reviews_per_month', 'host_response_rate_binned', 'host_verification_binned']])
         self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(self.dataset_encoded, self.dataset['perceived_quality'], test_size=0.2, random_state=42, stratify=self.dataset['perceived_quality'])
 
-    def classify_nb(self):
+    def classify_nb(self): 
         ''' Classification with Naive Bayes. '''
         naive_bayes = GaussianNB()
         #naive_bayes.fit(data_train, target_train)
@@ -68,3 +72,14 @@ class Classifier(object):
         nc_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
         prediction = nc_estimator.predict(self.data_test)
         self.accuracy_nc = nc_estimator.score(self.target_test, prediction)
+    
+    def svm(self ): #, C=1.0, gamma ='auto'):
+        ''' Classification with Support Vector Machine. '''
+
+        svc = SVC()
+        svc.fit(self.dataset_encoded, self.dataset['perceived_quality'])
+        prediction = svc.predict(self.data_test)
+        self.accuracy_svm = svc.score(self.target_test, prediction)
+
+
+

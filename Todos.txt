@@ -13,6 +13,8 @@ ROADMAP:
     in eine Methode packen - reuse
 22 - 10 Fold Cross Validation  for Accuracy, F1 Score and AUC [KERSTIN]
 23 - Tiefe Decision Tree [DENNIS]
+24 - classifier2 - encode and split : encoder abändern in OneHotEnoder (Sven) aber Achtung nicht bei allen sinnvol? & Flut an Spalten
+25  - C & Gamma ausnorden  [NADJA]
 
 DOC:
 1.Application area and goals [aus der Anmeldung und erweitern] [Kerstin und Dennis ]
