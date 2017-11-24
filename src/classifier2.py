@@ -26,7 +26,9 @@ class Classifier(object):
         self.accuracy_nb = 0
         self.accuracy_dt = 0
         self.accuracy_svm = 0
-
+        # TODO folgende Werte setzen - einfacher zu droppen
+       # idx_amenity
+        #idx_ifidf
         self.encode_and_split()
 
     #toString() equivalent to Java.
@@ -89,3 +91,5 @@ class Classifier(object):
         acc = svc.score(self.target_test, prediction)
         if acc > self.accuracy_svm:
             self.accuracy_svm = acc
+
+    #TODO write a drop colum method to separate normal dataset from other added vectors for reuse
