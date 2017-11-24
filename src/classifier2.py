@@ -24,7 +24,6 @@ class Classifier(object):
         self.accuracy_nb = 0
         self.accuracy_dt = 0
         self.accuracy_svm = 0
-        self.n = 0
 
         self.encode_and_split()
 
