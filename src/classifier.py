@@ -71,7 +71,7 @@ class Classifier(object):
         if acc > self.accuracy_nb:
             self.accuracy_nb = acc
 
-    def classify_knn(self, n=5):
+    def classify_knn(self, n=10):
         ''' Classification with K_Nearest_Neighbor. '''
         knn_estimator = KNeighborsClassifier(n)
         knn_estimator.fit(self.data_train, self.target_train)
