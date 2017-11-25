@@ -50,12 +50,15 @@ class Classifier(object):
                                                                    'require_guest_profile_picture', 'require_guest_phone_verification', 'calculated_host_listings_count', 'reviews_per_month', 'host_response_rate_binned', 'host_verification_binned']])
         
         self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(self.dataset_encoded, self.dataset['perceived_quality'], test_size=0.2, random_state=42, stratify=self.dataset['perceived_quality'])
+        print(len(self.data_train))
+        print(len(self.target_train))
+        print(len(self.data_test))
+        print(len(self.target_test))
 
     def classify_nb(self): 
         ''' Classification with Naive Bayes. '''
         naive_bayes = GaussianNB()
-        #naive_bayes.fit(data_train, target_train)
-        naive_bayes.fit(self.dataset_encoded, self.dataset['perceived_quality'])
+        naive_bayes.fit(self.data_train, self.target_train)
         prediction = naive_bayes.predict(self.data_test)
         acc = accuracy_score(self.target_test, prediction)
         if acc > self.accuracy_nb:
@@ -64,8 +67,7 @@ class Classifier(object):
     def classify_knn(self, n=5):
         ''' Classification with K_Nearest_Neighbor. '''
         knn_estimator = KNeighborsClassifier(n)
-        knn_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
-        #knn_estimator.fit(self.data_train, self.target_train)
+        knn_estimator.fit(self.data_train, self.target_train)
         prediction = knn_estimator.predict(self.data_test)
         acc = knn_estimator.score(self.target_test, prediction)
         if acc > self.accuracy_knn:
@@ -74,22 +76,17 @@ class Classifier(object):
     def classify_nc(self):
         ''' Classification with Nearest Centroid. '''
         nc_estimator = NearestCentroid()
-        nc_estimator.fit(self.dataset_encoded, self.dataset['perceived_quality'])
+        nc_estimator.fit(self.data_train, self.target_train)
         prediction = nc_estimator.predict(self.data_test)
-        self.accuracy_nc = nc_estimator.score(self.target_test, prediction)
         acc = nc_estimator.score(self.target_test, prediction)
         if acc > self.accuracy_nc:
             self.accuracy_nc = acc
-    def svm(self ): #, C=1.0, gamma ='auto'): # TODO muss ich hier dann nicht auch die paras übergeben?
+
+    def classify_svm(self, c, gamma): #, C=1.0, gamma ='auto')
         ''' Classification with Support Vector Machine. '''
-        svc = SVC()
-        svc.fit(self.dataset_encoded, self.dataset['perceived_quality'])
-        #svc.fit(data_train, target_train)
+        svc = SVC(c=c, gamma=gamma)
+        svc.fit(self.data_train, self.target_train)
         prediction = svc.predict(self.data_test)
-         #TODO hier wird bei mir ein FEHLER geworfen muss ein [[]] sein statt []
-        self.accuracy_svm = svc.score(self.target_test, prediction)
         acc = svc.score(self.target_test, prediction)
         if acc > self.accuracy_svm:
             self.accuracy_svm = acc
-
-    #TODO write a drop colum method to separate normal dataset from other added vectors for reuse

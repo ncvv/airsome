@@ -7,11 +7,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import GaussianNB
 #import graphviz
 #import pydotplus
-from sklearn.externals.six import StringIO
-from sklearn.cross_validation import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn import tree
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.utils.multiclass import unique_labels
 from category_encoders.ordinal import OrdinalEncoder
 from sklearn.neighbors import KNeighborsClassifier

@@ -20,7 +20,21 @@ def main(renew_listings=False):
     preprocessor = pp.Preprocessor(False, requests.Session(), listings, listings_text, reviews)
     preprocessor.process()
 
+    # For Tableau visualization by Helene, just ignore.
+    #data = io.read_csv('../data/playground/dataset.csv')
+    #plot_data = data[['id', 'longitude', 'latitude', 'perceived_quality']]
+    #io.write_csv(plot_data, '../data/playground/visualization.csv')
+
+    # Classification
     #dataset = io.read_csv('../data/playground/dataset.csv')
+    #dataset.drop('id', axis=1, inplace=True)
+    
+    #idx_amenity = dataset.columns.get_loc("Amenity_TV")
+    #idx_amenity_end = dataset.columns.get_loc ("Amenity_Paidparkingoffpremises")
+    #print(data.shape[1])
+    #data = dataset.drop(dataset.columns[idx_amenity-1: idx_amenity_end+1], axis =1, inplace=False)
+    #print(data.shape[1])
+    
     #classifier = cl.Classifier(dataset)
     #for kn in range(1, 10):
         #classifier.classify_knn(dataset, n=kn)
