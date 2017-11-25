@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.svm import SVC
+from sklearn import tree
 
 import io_util as io
 

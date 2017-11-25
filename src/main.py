@@ -79,6 +79,7 @@ def main(renew_listings=False):
     classifier.classify_svm()
     classifier.classify_knn()
     classifier.classify_nc()
+    classifier.classify_dt()
     #..
     print(classifier)
 
