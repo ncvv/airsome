@@ -115,3 +115,5 @@ tree.png
 encoded.csv
 data/playground/*
 src/Classifier
+data/final/*
+.gitignore
