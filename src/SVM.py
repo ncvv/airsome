@@ -18,25 +18,35 @@ def svm(dataset):
     #print ((cols))
 
     target_label = dataset['perceived_quality']
-    #TODO split DataFrame
+   
+   ##df.drop(df.columns[[1, 69]], axis=1, inplace=True)
+    ##Note df.columns[1:69] can be used for columns 2-70. 
+    data = dataset.drop(['id', 'perceived_quality'],axis=1, inplace=False)
+     #TODO split DataFrame
     idx_amenity = dataset.columns.get_loc("Amenity_TV")
     idx_amenity_end = dataset.columns.get_loc ("Amenity_Paidparkingoffpremises")
-   
-    data = dataset.drop(['id', 'perceived_quality'],axis=1)
+    print(data.shape[1])
+    data = dataset.drop(dataset.columns[idx_amenity-1: idx_amenity_end+1], axis =1, inplace=False)
+    print(data.shape[1])
+
     #print(data.head())
 
 
     #drop tables ACC using one way
     # before Accuracy SVM:0.5301204819277109
     # now SVM:0.5308734939759037
-    data = data.drop([ 'availability_60', 'availability_90', 'availability_365', 'availability_30', 'Amenity_Pool', 'Amenity_Freeparkingonstreet',  'Amenity_Paidparkingoffpremises', 'calculated_host_listings_count', 'Amenity_Dog(s)',  'Amenity_Cat(s)' , 'Amenity_Freeparkingonpremises', 'Amenity_Elevatorinbuilding',  'Amenity_Petsallowed', 'Amenity_Internet','minimum_nights' ,'Amenity_Shampoo', 'Amenity_24-hourcheck-in',  ],axis=1) 
+   # data = data.drop([ 'availability_60', 'availability_90', 'availability_365', 'availability_30', 'Amenity_Pool', 'Amenity_Freeparkingonstreet',  'Amenity_Paidparkingoffpremises', 'calculated_host_listings_count', 'Amenity_Dog(s)',  'Amenity_Cat(s)' , 'Amenity_Freeparkingonpremises', 'Amenity_Elevatorinbuilding',  'Amenity_Petsallowed', 'Amenity_Internet','minimum_nights' ,'Amenity_Shampoo', 'Amenity_24-hourcheck-in',  ],axis=1) 
 
     #one_way(data, target_label)
     print('Parameter tuning')
+    #SMALL DATA SET
    # using_GridSearch(data, target_label, use_small_dataset=True, use_cv=True, loose=True,  fine =False)
     #using_GridSearch(data, target_label, use_small_dataset=True, use_cv=True, loose=False,  fine =True)
-    #using_GridSearch(data, target_label, use_small_dataset=True, use_cv=True, loose=True,  fine =False)
+    using_GridSearch(data, target_label, use_small_dataset=True, use_cv=True, loose=True,  fine =False)
     #using_GridSearch(data, target_label, use_small_dataset=True, use_cv=True, loose=False,  fine =True)
+    #WHOLE DATASET
+    using_GridSearch(data, target_label, use_small_dataset=False, use_cv=True, loose=True,  fine =False)
+
     
     
     #print('Test derived Parameters')
