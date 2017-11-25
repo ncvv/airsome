@@ -15,8 +15,9 @@ import io_util as io
 class Classifier(object):
     ''' Class for classification. '''
 
-    def __init__(self, dataset, path, display_columns, ignore_list):
+    def __init__(self, dataset, path, long_tfidf, display_columns):
         self.dataset = dataset
+        self.data_encoded = None
         
         self.data_train = None
         self.data_test = None
@@ -29,10 +30,10 @@ class Classifier(object):
         self.accuracy_svm = 0
         self.accuracy_nc = 0
 
+        self.long_tfidf = long_tfidf
         self.display_columns = display_columns
         
-        self.encode_and_split(path, ignore_list)
-        
+        self.encode_and_split(path)
 
     #toString() equivalent to Java.
     def __str__(self):
@@ -44,23 +45,34 @@ class Classifier(object):
                "\nAccuracy NC:  " + '{0:.2f}%'.format(self.accuracy_nc) +
                "\n\nMax.: " + '{0:.2f}%'.format(max(self.accuracy_nb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm, self.accuracy_nc)))
 
-    def encode_and_split(self, path, ignore_list):
+    def encode_and_split(self, path):
         ''' Encode datatset and split it into training and test data. '''
         if os.path.exists(path):
-            data_encoded = io.read_csv(path)
+            self.data_encoded = io.read_csv(path)
         else:
             encoder = OrdinalEncoder()
-            data_encoded = encoder.fit_transform(self.dataset)
+            self.data_encoded = encoder.fit_transform(self.dataset)
             print('Encoding done for file: ' + str(path))
-            io.write_csv(data_encoded, path)
+            io.write_csv(self.data_encoded, path)
 
-        target = data_encoded['perceived_quality']
-        data_encoded.drop('perceived_quality', axis=1, inplace=True)
-        data_encoded.drop(ignore_list, axis=1, inplace=True)
+        target = self.data_encoded['perceived_quality']
+        self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
+        self.data_encoded.drop('id', axis=1, inplace=True)
+
+        # Insert drop of single columns here
+        #self.data_encoded.drop(['instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'], axis=1, inplace=True)
+        
+        # Insert drop of tfidf/amenity columns here
+        #self.exclude_amenity_columns()
+        #self.exclude_transit_tfidf()
+        #self.exclude_description_tfidf()
+        #self.exclude_houserules_tfidf()
+        #self.exclude_neighbor_tfidf()
+
         if self.display_columns:
-            print('Columns:\n' + '\n'.join(list(data_encoded)) + '\n')
+            print('Columns:\n' + '\n'.join(list(self.data_encoded)) + '\n')
 
-        self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(data_encoded, target, test_size=0.2, random_state=42, stratify=target)
+        self.data_train, self.data_test, self.target_train, self.target_test = train_test_split(self.data_encoded, target, test_size=0.2, random_state=42, stratify=target)
 
     def classify_nb(self): 
         ''' Classification with Naive Bayes. '''
@@ -106,3 +118,43 @@ class Classifier(object):
         acc = accuracy_score(self.target_test,prediction) * 100
         if acc > self.accuracy_dt:
             self.accuracy_dt = acc
+
+    def exclude_amenity_columns(self):
+        start = "Amenity_TV"
+        end = "Amenity_Paidparkingoffpremises"
+        self.__drop(start, end)
+
+    def exclude_transit_tfidf(self):
+        # No difference.
+        start = "transit_10"
+        end = "transit_west"
+        self.__drop(start, end)
+
+    def exclude_neighbor_tfidf(self):
+        if not self.long_tfidf:
+            start = "neighborhood_overview_area"
+            end = "neighborhood_overview_walk"
+        else:
+            start = "neighborhood_overview_10"
+            end = "neighborhood_overview_west"
+        self.__drop(start, end)
+
+    def exclude_description_tfidf(self):
+        if not self.long_tfidf:
+            start = "description_access"
+            end = "description_walk"
+        else:
+            start = "description_10"
+            end = "description_zone"
+        self.__drop(start, end)
+
+    def exclude_houserules_tfidf(self):
+        if not self.long_tfidf:
+            start = "house_rules_allow"
+        else:
+            start = "house_rules_10pm"
+        end = "house_rules_use"
+        self.__drop(start, end)
+
+    def __drop(self, start, end):
+        self.data_encoded.drop(self.data_encoded.columns[self.data_encoded.columns.get_loc(start): self.data_encoded.columns.get_loc(end) + 1], axis=1, inplace=True)

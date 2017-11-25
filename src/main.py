@@ -20,54 +20,21 @@ def main(renew_listings=False):
         preprocessor = pp.Preprocessor(False, requests.Session(), listings, listings_text, reviews)
         preprocessor.process()
 
-    # For Tableau visualization by Helene, just ignore.
-    #data = io.read_csv('../data/playground/dataset.csv')
-    #plot_data = data[['id', 'longitude', 'latitude', 'perceived_quality']]
-    #io.write_csv(plot_data, '../data/playground/visualization.csv')
-
     # Classification
-    dataset = io.read_csv('../data/final/dataset.csv')
-    
-    encoded_file_path = '../data/final/encoded_dataset'
+    long_tfidf = False
+    file_name = 'dataset_2'
 
-    ### Warning: If line 230ff in preprocess.py ("mehr features") are used, .get_loc("") have to be adjusted.
-    # Drop Amenities
-    #idx_amenity = dataset.columns.get_loc("Amenity_TV")
-    #idx_amenity_end = dataset.columns.get_loc ("Amenity_Paidparkingoffpremises") + 1
-    #dataset.drop(dataset.columns[idx_amenity: idx_amenity_end], axis=1, inplace=True)
-    #encoded_file_path += '_woamenities'
-
-    # Drop Transit TFIDF
-    idx_tfidf_transit = dataset.columns.get_loc("transit_10")
-    idx_tfidf_transit_end = dataset.columns.get_loc("transit_west") + 1
-    dataset.drop(dataset.columns[idx_tfidf_transit: idx_tfidf_transit_end], axis=1, inplace=True)
-    encoded_file_path += '_wotransit'
+    if long_tfidf:
+        file_name += '_long_tfidf'
+    dataset = io.read_csv('../data/final/' + file_name + '.csv')
     
-    # Drop Description TFIDF
-    idx_tfidf_description = dataset.columns.get_loc("description_access")
-    idx_tfidf_description_end = dataset.columns.get_loc("description_walk") + 1
-    dataset.drop(dataset.columns[idx_tfidf_description: idx_tfidf_description_end], axis=1, inplace=True)
-    encoded_file_path += '_wodescr'
+    encoded_file_path = '../data/final/' + file_name + '_encoded.csv'
     
-    # Drop Neighborhood TFIDF
-    idx_tfidf_neighborhood = dataset.columns.get_loc("neighborhood_overview_area")
-    idx_tfidf_neighborhood_end = dataset.columns.get_loc("neighborhood_overview_walk") + 1
-    dataset.drop(dataset.columns[idx_tfidf_neighborhood: idx_tfidf_neighborhood_end], axis=1, inplace=True)
-    encoded_file_path += '_woneighbor'
+    print('#Columns: ' + str(len(list(dataset))))
+    print('#Rows: ' + str(len(dataset)) + '\n')
     
-    # Drop House Rules TFIDF
-    #idx_tfidf_house_rules = dataset.columns.get_loc("house_rules_allow")
-    #idx_tfidf_house_rules_end = dataset.columns.get_loc("house_rules_use") + 1
-    #dataset.drop(dataset.columns[idx_tfidf_house_rules: idx_tfidf_house_rules_end], axis=1, inplace=True)
-    #encoded_file_path += '_wohrules'
-
-    encoded_file_path += '.csv'
-    
-    #print('#Columns: ' + str(len(list(dataset))))
-    #print('#Rows: ' + str(len(dataset)) + '\n')
-    
-    classifier = cl.Classifier(dataset, encoded_file_path, display_columns=False, ignore_list=['id', 'instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'])
-    for kn in range(1, 10):
+    classifier = cl.Classifier(dataset, encoded_file_path, long_tfidf=long_tfidf, display_columns=False)
+    for kn in range(2, 7):
         classifier.classify_knn(n=kn)
     classifier.classify_nb()
     classifier.classify_svm()
