@@ -10,9 +10,19 @@ from langdetect import detect
 import io_util as io
 
 import pandas as pd
-import numpy as np
 
-pd.options.mode.chained_assignment = None
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.stem.porter import PorterStemmer
+
+class StemTokenizer(object):
+
+    def __init__(self):
+        self.stemmer = PorterStemmer()
+        self.token_pattern = re.compile(r"(?u)\b\w\w+\b")
+
+    def __call__(self, doc):
+        return [self.stemmer.stem(t) for t in self.token_pattern.findall(doc)]
 
 class Preprocessor(object):
     ''' Preprocesses data with different methods. '''
@@ -25,6 +35,7 @@ class Preprocessor(object):
         self.reviews = reviews_data
         self.removal_ids = []
         self.review_removal_ids = []
+        pd.options.mode.chained_assignment = None
 
     # See commit 8f9d8e1f for implementation of writing results to a .csv.
     def check_onair(self):
@@ -87,14 +98,19 @@ class Preprocessor(object):
         ''' Create the label from review_scores_rating. '''
         label_name = 'perceived_quality'
         if num_labels == 2:
-            bins = [0, 93, 100]
+            #bins = [0, 93, 100]
             grp_names = ['Bad', 'Good']
+        elif num_labels == 3:
+            grp_names = ['Bad', 'Medium', 'Good']
+        elif num_labels == 4:
+            grp_names = ['Bad', 'Medium', 'Good', 'Very Good']
         elif num_labels == 5:
-            bins = [0, 65, 75, 90, 95, 100]
+            #bins = [0, 65, 75, 90, 95, 100]
             grp_names = ['Catastrophic', 'Bad', 'Medium', 'Good', 'Very Good']
         else:
-            raise ValueError("#Labels must be in [2, 5]")
-        df[label_name] = pd.cut(df['review_scores_rating'], bins, labels=grp_names)
+            raise ValueError("#Labels must be in [2:6]")
+        df[label_name] = pd.qcut(df['review_scores_rating'], q=num_labels, labels=grp_names)
+        #df[label_name] = pd.cut(df['review_scores_rating'], bins, labels=grp_names)
         df.drop('review_scores_rating', axis=1, inplace=True)
 
     def normalize(self, df, column_list):
@@ -139,11 +155,18 @@ class Preprocessor(object):
             col_name = 'Amenity_' + str(amenity_key).replace(' ','')
             io.append_dict_as_column_df(df, col_name, column)
 
-    def process_text(self, df, col_name, top_x = 100):
+    def process_text(self, df, col_name, min_df, max_df):
         ''' Tokenize, stem, remove stopwords and apply TFIDF to given text column. '''
-        # sven, BA
-        print('h')
-    
+        stem_vectorizer = TfidfVectorizer(tokenizer=StemTokenizer(), stop_words='english', ngram_range=(1,1), min_df=min_df, max_df=max_df)
+        stem_matrix = stem_vectorizer.fit_transform(df[col_name])
+        cols = [col_name + '_' + x for x in stem_vectorizer.get_feature_names()]
+        print('First idx: ' + str(cols[0]) + ', Last idx: ' + str(cols[-1]))
+        df_tfidf = pd.DataFrame(stem_matrix.toarray(), columns=cols)
+        return df_tfidf
+        
+        #for tfidf, word in self.get_word_freq(stem_matrix, stem_vectorizer)[:20]:
+        #    print("{:.3f} {}".format(tfidf, word))
+
     # Unused
     def check_language(self, df):
         ''' Remove English reviews. '''
@@ -191,33 +214,34 @@ class Preprocessor(object):
         self.listings_text.dropna(subset=['transit', 'house_rules', 'description', 'neighborhood_overview'], inplace=True)
         self.parse_amenities(self.listings_text)
         self.listings_text.drop('amenities', axis=1, inplace=True)
-
-        #self.process_text(self.listings_text, 'transit')
-
+        
         # Normalize columns with numeric values
         self.normalize(self.listings, column_list = ['accommodates', 'bathrooms', 'bedrooms', 'beds', 'price', 'security_deposit', 'cleaning_fee', 'guests_included', 'extra_people', 'minimum_nights', 'maximum_nights', 'availability_30', 'availability_60', 'availability_90', 'availability_365', 'number_of_reviews', 'calculated_host_listings_count'])
 
         # After all processing steps are done in listings and listings_text_processed, merge them on key = 'id'
         self.listings = io.merge_df(self.listings, self.listings_text, 'id')
 
-        ''' Usage of Reviews in our classification is discouraged by Prof. '''
-        # Remove reviews that are not english
-        #self.reviews = self.reviews.dropna(axis=0, how='any')
-        #self.check_language(self.reviews)
+        # 'transit', 'house_rules', 'description', 'neighborhood_overview'
+        # wenig features (weniger: 0.4 0.5; mehr: 0.1 0.9)
+        house_rules = self.process_text(self.listings, 'house_rules', 0.15, 0.7)
+        transit = self.process_text(self.listings, 'transit', 0.15, 0.7)
+        description = self.process_text(self.listings, 'description', 0.3, 0.7)
+        neighborhood = self.process_text(self.listings, 'neighborhood_overview', 0.18, 0.7)
+        # mehr features
+        #house_rules = self.process_text(self.listings, 'house_rules', 0.1, 0.9)
+        #transit = self.process_text(self.listings, 'transit', 0.1, 0.9)
+        #description = self.process_text(self.listings, 'description', 0.1, 0.9)
+        #neighborhood = self.process_text(self.listings, 'neighborhood_overview', 0.1, 0.9)
 
-        # Remove all of the ids in reviews_removal_ids from the listings
-        #self.reviews = io.remove_lines_by_id_df(self.reviews, self.review_removal_ids)
-
-        # After all processing setps are done in reviews.csv and processed text is grouped by id, merge it with listings
-        # Maybe we have to overthink this (for example: do we have columns with the same name in the processed listings_text and reviews?
-        #                                  Avoid this by appending _lt or _rev at the new columns' names)
-        #self.listings = io.merge_df(self.listings, self.reviews, 'id')
-        ''' Usage of Reviews in our classification is discouraged by Prof. '''
+        self.listings = pd.concat([self.listings, house_rules], axis=1)
+        self.listings = pd.concat([self.listings, transit], axis=1)
+        self.listings = pd.concat([self.listings, description], axis=1)
+        self.listings = pd.concat([self.listings, neighborhood], axis=1)
+        self.listings.drop(['transit', 'house_rules', 'description', 'neighborhood_overview'], axis=1, inplace=True)
 
         # After all processing steps are done, write the listings file to the playground (this will be changed to ../data/final/_.csv)
-        print('#Examples in the end: ' + str(len(self.listings))) # Printing the number of resulting examples for testing purposes and validation
-        #self.listings.drop('id', axis=1, inplace=True)
-        io.write_csv(self.listings, '../data/playground/dataset.csv')
+        print('#Examples in the end: ' + str(len(self.listings)) + '\n#Columns in the end: ' + str(len(self.listings.columns))) # Printing the number of resulting examples for testing purposes and validation
+        io.write_csv(self.listings, '../data/final/dataset.csv')
 
     @staticmethod
     def prepare_listings_data(listings):
@@ -237,3 +261,7 @@ class Preprocessor(object):
 
         io.write_csv(listings, '../data/processed/listings_processed.csv')
         io.write_csv(listings_text, '../data/processed/listings_text_processed.csv')
+
+    @staticmethod
+    def get_word_freq(matrix, vectorizer):
+        return sorted([(matrix.getcol(idx).sum(), word) for word, idx in vectorizer.vocabulary_.items()], reverse=True)
