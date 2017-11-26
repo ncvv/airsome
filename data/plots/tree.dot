@@ -1,0 +1,33 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label=<host_is_superhost &le; 0.5<br/>gini = 0.497<br/>samples = 5310<br/>value = [2857, 2453]<br/>class = Bad>, fillcolor="#e5813924"] ;
+1 [label=<calculated_host_listings_count &le; 0.005<br/>gini = 0.469<br/>samples = 4389<br/>value = [2743, 1646]<br/>class = Bad>, fillcolor="#e5813966"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label=<number_of_reviews &le; 0.03<br/>gini = 0.493<br/>samples = 3202<br/>value = [1795, 1407]<br/>class = Bad>, fillcolor="#e5813937"] ;
+1 -> 2 ;
+3 [label=<gini = 0.497<br/>samples = 1573<br/>value = [721, 852]<br/>class = Good>, fillcolor="#399de527"] ;
+2 -> 3 ;
+4 [label=<gini = 0.449<br/>samples = 1629<br/>value = [1074, 555]<br/>class = Bad>, fillcolor="#e581397b"] ;
+2 -> 4 ;
+5 [label=<number_of_reviews &le; 0.019<br/>gini = 0.322<br/>samples = 1187<br/>value = [948, 239]<br/>class = Bad>, fillcolor="#e58139bf"] ;
+1 -> 5 ;
+6 [label=<gini = 0.423<br/>samples = 352<br/>value = [245, 107]<br/>class = Bad>, fillcolor="#e5813990"] ;
+5 -> 6 ;
+7 [label=<gini = 0.266<br/>samples = 835<br/>value = [703, 132]<br/>class = Bad>, fillcolor="#e58139cf"] ;
+5 -> 7 ;
+8 [label=<reviews_per_month &le; 0.855<br/>gini = 0.217<br/>samples = 921<br/>value = [114, 807]<br/>class = Good>, fillcolor="#399de5db"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label=<neighborhood_overview_distanc &le; 0.138<br/>gini = 0.384<br/>samples = 189<br/>value = [49, 140]<br/>class = Good>, fillcolor="#399de5a6"] ;
+8 -> 9 ;
+10 [label=<gini = 0.431<br/>samples = 153<br/>value = [48, 105]<br/>class = Good>, fillcolor="#399de58a"] ;
+9 -> 10 ;
+11 [label=<gini = 0.054<br/>samples = 36<br/>value = [1, 35]<br/>class = Good>, fillcolor="#399de5f8"] ;
+9 -> 11 ;
+12 [label=<number_of_reviews &le; 0.001<br/>gini = 0.162<br/>samples = 732<br/>value = [65, 667]<br/>class = Good>, fillcolor="#399de5e6"] ;
+8 -> 12 ;
+13 [label=<gini = 0.0<br/>samples = 3<br/>value = [3, 0]<br/>class = Bad>, fillcolor="#e58139ff"] ;
+12 -> 13 ;
+14 [label=<gini = 0.156<br/>samples = 729<br/>value = [62, 667]<br/>class = Good>, fillcolor="#399de5e7"] ;
+12 -> 14 ;
+}

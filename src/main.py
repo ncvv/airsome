@@ -23,8 +23,8 @@ def main(renew_listings=False):
     # Classification
     file_name = 'dataset'
     
-    long_tfidf = False
-    num_labels = 3
+    long_tfidf = True
+    num_labels = 2
 
     file_name += '_' + str(num_labels)
 

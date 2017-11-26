@@ -25,6 +25,7 @@ class Classifier(object):
         self.target_test = None
         
         self.accuracy_knn = 0
+        self.accuracy_knn_n = "?"
         self.accuracy_nb = 0
         self.accuracy_dt = 0
         self.accuracy_svm = 0
@@ -38,11 +39,11 @@ class Classifier(object):
     #toString() equivalent to Java.
     def __str__(self):
         return ("Classification Results:"
-               "\nAccuracy NB:  " + '{0:.2f}%'.format(self.accuracy_nb) +
-               "\nAccuracy kNN: " + '{0:.2f}%'.format(self.accuracy_knn) +
-               "\nAccuracy DT:  " + '{0:.2f}%'.format(self.accuracy_dt) +
+               "\nAccuracy NB:  " + '{0:.2f}%'.format(self.accuracy_nb)  +
+               "\nAccuracy kNN: " + '{0:.2f}%'.format(self.accuracy_knn) + ', n=' + str(self.accuracy_knn_n) +
+               "\nAccuracy DT:  " + '{0:.2f}%'.format(self.accuracy_dt)  +
                "\nAccuracy SVM: " + '{0:.2f}%'.format(self.accuracy_svm) +
-               "\nAccuracy NC:  " + '{0:.2f}%'.format(self.accuracy_nc) +
+               "\nAccuracy NC:  " + '{0:.2f}%'.format(self.accuracy_nc)  +
                "\n\nMax.: " + '{0:.2f}%'.format(max(self.accuracy_nb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm, self.accuracy_nc)))
 
     def encode_and_split(self, path):
@@ -63,11 +64,11 @@ class Classifier(object):
         #self.data_encoded.drop(['instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'], axis=1, inplace=True)
         
         # Insert drop of tfidf/amenity columns here
-        self.exclude_amenity_columns()
+        #self.exclude_amenity_columns()
         #self.exclude_transit_tfidf()
         #self.exclude_description_tfidf()
         #self.exclude_houserules_tfidf()
-        self.exclude_neighbor_tfidf()
+        #self.exclude_neighbor_tfidf()
 
         if self.display_columns:
             print('Columns:\n' + '\n'.join(list(self.data_encoded)) + '\n')
@@ -83,14 +84,15 @@ class Classifier(object):
         if acc > self.accuracy_nb:
             self.accuracy_nb = acc
 
-    def classify_knn(self, n=10):
+    def classify_knn(self, n=3):
         ''' Classification with K_Nearest_Neighbor. '''
         knn_estimator = KNeighborsClassifier(n)
         knn_estimator.fit(self.data_train, self.target_train)
         prediction = knn_estimator.predict(self.data_test)
         acc = accuracy_score(self.target_test, prediction) * 100
         if acc > self.accuracy_knn:
-            self.accuracy_knn = acc
+            self.accuracy_knn   = acc
+            self.accuracy_knn_n = n
 
     def classify_nc(self):
         ''' Classification with Nearest Centroid. '''
@@ -112,9 +114,30 @@ class Classifier(object):
 
     def classify_dt(self):
         ''' Clasificiation with Decision Tree'''
+        import graphviz
+        import subprocess
+        import time
+        from sklearn.utils.multiclass import unique_labels
+
         decision_tree = tree.DecisionTreeClassifier(max_depth=3,criterion="gini")
         decision_tree.fit(self.data_train,self.target_train) 
         prediction = decision_tree.predict(self.data_test)
+        
+        dot_data = tree.export_graphviz(decision_tree,
+            feature_names=self.data_encoded.columns.values,
+            class_names=unique_labels(self.dataset['perceived_quality']),
+            filled=True,
+            rounded=True,
+            special_characters=True,
+            out_file=None
+        )
+
+        #with open('../data/plots/tree.dot', 'w') as f:
+        #    f.write(dot_data)
+        #time.sleep(2)
+
+        #subprocess.call(['dot -Tpng ../data/plots/tree.dot -o ../data/plots/image.png'], shell=True)
+
         acc = accuracy_score(self.target_test,prediction) * 100
         if acc > self.accuracy_dt:
             self.accuracy_dt = acc
