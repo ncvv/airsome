@@ -203,7 +203,7 @@ class Classifier(object):
             self.loose_grid_search_SVM(data= self.data_encoded, target=target_label)
         if (fine):
             print('Fine Grid Search')
-            self.fine_grid_search_SVM(data=self.data_encoded, target=target_label)
+            self.fine_grid_search_SVM(data, target=target_label)
 
     def loose_grid_search_SVM(self, data, target):
         parameters = {
@@ -212,7 +212,7 @@ class Classifier(object):
             'gamma': [2**(-15),2**(-13),2**(-11),2**(-9),2**(-7),2**(-5),2**(-3),2**(-1),2**(1),2**(3),2**(5), 'auto']#Kernel coefficient for ‘rbf’=> if ‘auto’ then 1/n_features used
         }
 
-        start_GridSearch_SVM(parameters, data, target)
+        self.start_GridSearch_SVM(parameters, data, target)
 
     def fine_grid_search_SVM(self, data, target):
         #TODO again after loose Grid Search
@@ -225,7 +225,7 @@ class Classifier(object):
 
     def start_GridSearch_SVM(self,parameters, data, target):
         clf = SVC()
-        print('using !0 Fold Cross-Validation')
+        print('using 10 Fold Cross-Validation')
         cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42) 
         grid_search_estimator = GridSearchCV(clf, parameters, scoring='accuracy', cv=cv)
         grid_search_estimator.fit(data, target)
