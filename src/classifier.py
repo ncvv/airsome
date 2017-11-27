@@ -72,11 +72,11 @@ class Classifier(object):
         #self.data_encoded.drop(['instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'], axis=1, inplace=True)
         
         # Insert drop of tfidf/amenity columns here
-        #self.exclude_amenity_columns()
+        self.exclude_amenity_columns()
         #self.exclude_transit_tfidf()
         #self.exclude_description_tfidf()
         #self.exclude_houserules_tfidf()
-        #self.exclude_neighbor_tfidf()
+        self.exclude_neighbor_tfidf()
 
         if self.display_columns:
             print('Columns:\n' + '\n'.join(list(self.data_encoded)) + '\n')

@@ -24,7 +24,12 @@ def main(renew_listings=False):
         preprocessor.process(num_labels, long_tfidf)
 
     # Classification
-    file_name = 'dataset_' + str(num_labels) + '_long_tfidf' if long_tfidf else ''
+    file_name = 'dataset'
+    
+    long_tfidf = False
+    num_labels = 2
+
+    file_name += '_' + str(num_labels)
 
     dataset = io.read_csv('../data/final/' + file_name + '.csv')
 

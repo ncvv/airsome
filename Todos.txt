@@ -6,7 +6,9 @@ Tasks:
 QUESTIONS:
 Para tuning auf welchen daten ? encoded und best pred data set? kein train and test split?
 
-
+01 - Test 21, 32 von False (21: DROP amenities, description_tfidf; 32 DROP amenities, transit_tfids, description_tfidf, neighborhood tfidf, house rules) , Test 29 von True (DROP amenities, transit_tfidf, description_tfidf) mit 2 labels 
+03 - Confusion Matrix, Classification Report, ROC Curve ab jetzt immer ausgeben lassen
+04 - Location (=zip code und neighborhood) mal raus nehmen, da ja laut der Karte location keinen Unterschied macht
 
 ROADMAP:
 01 - Test best Dataset 
