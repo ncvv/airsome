@@ -47,6 +47,18 @@ def main(renew_listings=False):
     #classifier.para_tuning_SVM( loose=True, fine=False)
     #print(classifier)
 
+    ####Prediction
+    #classifier.prediction()
+    #print(classifier)
+
+    ####AUC
+    #classifier.roc_curve()
+    #classifier.postprocess()
+    #classifier.avg_roc()
+    #classifier.plot_roc_curve()
+    #print(classifier)
+
+
 if __name__ == '__main__':
     if sys.argv[1:]:
         renew_listings_flag = sys.argv[1]
