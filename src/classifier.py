@@ -150,7 +150,7 @@ class Classifier(object):
             self.accuracy_nb = acc
         self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
-        #self.plot_confusion_matrix(confusion_matrix(self.target_test, prediction), classes=self.binary_labels)
+       #self.plot_confusion_matrix(confusion_matrix(self.target_test, prediction), classes=self.binary_labels)
         self.roc_estimators[cl_label] = naive_bayes
         print('-' * 52)
 
@@ -318,3 +318,20 @@ class Classifier(object):
         grid_search_estimator.fit(data, target)
 
         print("best score is {} with params {}".format(grid_search_estimator.best_score_, grid_search_estimator.best_params_ ))
+
+    def para_tuning_dt(self):
+        '''Testing best values'''
+        target_label = self.label
+        decision_tree =tree.DecisionTreeClassifier()
+        parameters = {
+        'criterion':['gini', 'entropy'], 
+        'max_depth':[1, 2, 3, 4, 5, 6, 7, 8, None],
+        'min_samples_split' :[2,3,4,5,6,7,8,9]
+        }
+        stratified = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+        grid_search_estimator = GridSearchCV(decision_tree,parameters,scoring = 'accuracy', cv=stratified)
+        grid_search_estimator.fit(self.data_encoded,target_label)
+        print("best score is {} with params {}".format(grid_search_estimator.best_score_, grid_search_estimator.best_params_ ))
+        results = grid_search_estimator.cv_results_
+        for i in range(len(results['params'])):
+            print("{}, {}".format(results['params'][i], results['mean_test_score'][i]))
