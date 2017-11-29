@@ -68,12 +68,10 @@ class Classifier(object):
        
         target = self.data_encoded['perceived_quality']
         self.label = target
-        self.data_encoded.drop('perceived_quality', axis=1, inplace=True)
-        self.data_encoded.drop('id', axis=1, inplace=True)
 
         # Insert drop of single columns here
-        #self.data_encoded.drop(['instant_bookable', 'require_guest_profile_picture', 'first_review', 'last_review'], axis=1, inplace=True)
-        self.data_encoded.drop(['instant_bookable',  'availability_30' ,'availability_60' ,'availability_90','availability_365', 'host_location', 'host_verification_binned','host_response_rate_binned','require_guest_phone_verification','host_response_time', 'zipcode','require_guest_profile_picture','calculated_host_listings_count', 'first_review', 'last_review'], axis=1, inplace=True)
+        drop_list = ['id', 'perceived_quality', 'instant_bookable',  'availability_30' ,'availability_60' ,'availability_90','availability_365', 'host_location', 'host_verification_binned','host_response_rate_binned','require_guest_phone_verification','host_response_time', 'zipcode','require_guest_profile_picture','calculated_host_listings_count', 'first_review', 'last_review']
+        self.data_encoded.drop(drop_list, axis=1, inplace=True)
 
         # Insert drop of tfidf/amenity columns here
         self.exclude_amenity_columns()
