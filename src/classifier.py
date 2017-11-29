@@ -364,3 +364,27 @@ class Classifier(object):
         grid_search_estimator.fit(data,target)
 
         print("best score is {} with params {}".format(grid_search_estimator.best_score_, grid_search_estimator.best_params_ ))
+
+
+    # Parameter Tuning NC
+    def para_tuning_nc(self):
+        clf = NearestCentroid()
+        #parameter = clf.get_params()
+        #print(parameter)
+        target = self.label
+        data = self.data_encoded
+        self.grid_search_nc(data = data, target=target)
+
+    def grid_search_nc(self, data, target):
+        clf = NearestCentroid()
+        print('using 10 Fold Cross-Validation for Classifier NC')
+        parameters = {
+            'metric':['euclidean','l2', 'l1', 'manhattan'], 
+            'shrink_threshold':[None, 0.1,0.2,0.3,0.4,0.5],
+        }
+        cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+
+        grid_search_estimator = GridSearchCV(clf, parameters, scoring='accuracy', cv=cv, verbose=100, n_jobs=-1)
+        grid_search_estimator.fit(data,target)
+
+        print("best score is {} with params {}".format(grid_search_estimator.best_score_, grid_search_estimator.best_params_ ))
