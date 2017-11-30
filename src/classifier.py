@@ -311,8 +311,8 @@ class Classifier(object):
         #TODO again after loose Grid Search
         parameters = {
             'kernel': ['rbf'],
-            'C': [ 384, 448,  2**(9), 640,  768],# penalty
-            'gamma': [0.0000915, 0.0001068, 2**(-13), 0.000151, 0.00018] # quarter i*1/4 away from middle 2^-13
+            'C': [ 19, 19.5, 20, 20.5, 21],# penalty
+            'gamma': [0.0077, 0.00775, 0.0078, 2**(-7),0.00785, 0.0079] # quarter i*1/4 away from middle 2^-13
         }
         self.start_gridsearch_svm(parameters, data, target)
 
