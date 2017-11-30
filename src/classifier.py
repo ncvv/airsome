@@ -12,6 +12,7 @@ from scipy import interp
 from category_encoders.ordinal import OrdinalEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, roc_curve, auc, classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split, cross_val_predict
 from sklearn.neighbors.nearest_centroid import NearestCentroid
@@ -40,6 +41,7 @@ class Classifier(object):
         self.accuracy_knn = 0
         self.accuracy_knn_n = "?"
         self.accuracy_nb = 0
+        self.accuracy_mnb=0
         self.accuracy_dt = 0
         self.accuracy_svm = 0
         self.accuracy_nc = 0
@@ -55,11 +57,12 @@ class Classifier(object):
     def __str__(self):
         return ("Classification Results:"
                "\nAccuracy NB:  " + '{0:.2f}%'.format(self.accuracy_nb) +
+               "\nAccuracy MNB: " + '{0:.2f}%'.format(self.accuracy_mnb) +
                "\nAccuracy kNN: " + '{0:.2f}%'.format(self.accuracy_knn) + ', n=' + str(self.accuracy_knn_n) +
                "\nAccuracy DT:  " + '{0:.2f}%'.format(self.accuracy_dt) +
                "\nAccuracy SVM: " + '{0:.2f}%'.format(self.accuracy_svm) +
                "\nAccuracy NC:  " + '{0:.2f}%'.format(self.accuracy_nc) +
-               "\n\nMax.: " + '{0:.2f}%'.format(max(self.accuracy_nb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm, self.accuracy_nc)))
+               "\n\nMax.: " + '{0:.2f}%'.format(max(self.accuracy_nb, self.accuracy_mnb, self.accuracy_knn, self.accuracy_dt, self.accuracy_svm, self.accuracy_nc)))
 
     def encode_and_split(self, path):
         ''' Encode datatset and split it into training and test data. '''
@@ -158,8 +161,8 @@ class Classifier(object):
             plt.show()
 
     def classify_nb(self): 
-        ''' Classification with Naive Bayes. '''
-        cl_label = "Naive Bayes"
+        ''' Classification with Gaussian Naive Bayes. '''
+        cl_label = "Gaussian Naive Bayes"
         naive_bayes = GaussianNB()
         naive_bayes.fit(self.data_train, self.target_train)
         prediction = naive_bayes.predict(self.data_test)
@@ -170,6 +173,21 @@ class Classifier(object):
         self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
         self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
         self.roc_estimators[cl_label] = naive_bayes
+
+    def classify_mnb(self): 
+        ''' Classification with Multinomial Naive Bayes. '''
+        cl_label = "Multinomial Naive Bayes"
+        multi_naive_bayes = MultinomialNB(alpha=0)
+        multi_naive_bayes.fit(self.data_train, self.target_train)
+        prediction = multi_naive_bayes.predict(self.data_test)
+        acc = accuracy_score(self.target_test, prediction) * 100
+        if acc > self.accuracy_mnb:
+            self.accuracy_mnb = acc
+        self.__print_cm(self.target_test, prediction, labels=self.binary_labels, print_label=cl_label)
+        self.__print_cr(self.target_test, prediction, target_names=self.binary_labels, print_label=cl_label)
+        self.__plot_cm(confusion_matrix(self.target_test, prediction), classes=self.binary_labels, print_label=cl_label, show=False)
+        self.roc_estimators[cl_label] = multi_naive_bayes
+
 
     def classify_knn(self, n=3, display_matrix=False):
         ''' Classification with K_Nearest_Neighbor. '''

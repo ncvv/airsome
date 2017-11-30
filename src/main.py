@@ -49,6 +49,8 @@ def main(renew_listings=False):
     print('-' * 52)
     classifier.classify_nb()
     print('-' * 52)
+    classifier.classify_mnb()
+    print('-' * 52)
     classifier.classify_svm(display_roc=True)
     print('-' * 52)
     classifier.classify_nc()
