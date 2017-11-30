@@ -391,7 +391,7 @@ class Classifier(object):
     def para_tuning_nc(self):
         ''' Parameter Tuning NC. '''
         parameters = {
-            'metric':['euclidean', 'l2', 'l1', 'manhattan'], 
+            'metric':['euclidean','manhattan'], 
             'shrink_threshold':[None, 1, 1.1, 6, 7, 8, 9, 10, 11, 12, 13],
         }
         self.tune(NearestCentroid(), parameters, 3, self.data_encoded, self.label)
